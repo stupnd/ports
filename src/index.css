@@ -1,0 +1,109 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-bg: #fafaf8;
+  --color-ink: #111111;
+  --color-ink-card: #1e1e1e;
+  --color-terracotta: #e8521a;
+  --color-cobalt: #2a4bcc;
+  --color-sun: #f0c93a;
+  --color-forest: #1a6b45;
+  --color-muted: #888880;
+  --color-card: #f2f2ee;
+  --color-sand: #f5efe6;
+
+  --font-family-display: 'Syne', system-ui, sans-serif;
+  --font-family-serif: 'Playfair Display', Georgia, serif;
+  --font-family-body: 'Inter', system-ui, sans-serif;
+  --font-family-hand: 'Caveat', 'Bradley Hand', cursive;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    font-family: var(--font-family-body);
+    background-color: var(--color-bg);
+    color: var(--color-ink);
+    font-size: 16px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background-color: color-mix(in srgb, var(--color-terracotta) 28%, transparent);
+  }
+
+  html {
+    scrollbar-color: var(--color-terracotta) var(--color-bg);
+    scrollbar-width: thin;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-bg);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-terracotta);
+    border: 2px solid var(--color-bg);
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, var(--color-terracotta) 85%, #000);
+  }
+}
+
+@layer components {
+  .f-display {
+    font-family: var(--font-family-display);
+  }
+
+  .f-serif {
+    font-family: var(--font-family-serif);
+  }
+
+  .f-body {
+    font-family: var(--font-family-body);
+  }
+
+  .f-hand {
+    font-family: var(--font-family-hand);
+  }
+
+  .eyebrow {
+    font-family: var(--font-family-body);
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+}
+
+@keyframes scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  animation: scroll 25s linear infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+}
