@@ -85,14 +85,14 @@ export default function BridgePreview() {
         ))}
         <circle cx="24" cy="32" r="2" fill="#F0C93A" opacity="0.7" />
       </svg>
-      <div className="flex flex-1 flex-col gap-1.5">
+      <div className="flex min-w-0 flex-1 flex-col gap-1.5">
         <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-bg/70">
           ASL → text
         </span>
-        <div className="flex h-7 items-center rounded-md bg-bg/10 px-2 ring-1 ring-bg/15">
-          <span className="f-display text-[15px] font-bold tracking-[0.1em] text-sun">
+        <div className="flex h-7 min-w-0 items-center overflow-hidden rounded-md bg-bg/10 px-2 ring-1 ring-bg/15">
+          <span className="f-display truncate text-[12.5px] font-bold tracking-[0.06em] text-sun">
             {PHRASES[phraseIdx].slice(0, charCount)}
-            <span className="ml-0.5 inline-block h-3 w-[2px] translate-y-0.5 bg-sun/70 align-middle" />
+            <span className="ml-0.5 inline-block h-2.5 w-[2px] translate-y-0.5 bg-sun/70 align-middle" />
           </span>
         </div>
       </div>

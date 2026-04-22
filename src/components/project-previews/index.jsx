@@ -5,6 +5,7 @@ import { lazy, Suspense } from 'react'
 const previews = {
   sage: lazy(() => import('./SagePreview')),
   glowmatch: lazy(() => import('./GlowMatchPreview')),
+  trippy: lazy(() => import('./TrippyPreview')),
   bridge: lazy(() => import('./BridgePreview')),
 }
 

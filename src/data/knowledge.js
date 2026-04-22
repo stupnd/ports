@@ -61,46 +61,30 @@ export const projects = [
     accent: 'cobalt',
     caseStudy: {
       problem:
-        'Retail investors drown in noise — tickers, news, filings — without a way to ask plain-English questions about their own portfolio. Sage turns "why is NVDA up?" into a grounded answer using the user\'s actual holdings, with the model calling live data tools mid-response.',
+        "Most investing tools either give you raw data with no explanation, or oversimplified advice with no transparency. There's no middle layer that thinks with you in real time — one that can fetch a live quote, explain what it means, and render a chart inline without losing the thread of the conversation.",
       pullQuote:
-        'Streaming tokens are the difference between a demo and a product. Users read at the same speed the model writes.',
-      architecture: {
-        nodes: [
-          { id: 'client', label: 'Next.js client', col: 0, row: 0 },
-          { id: 'api', label: 'FastAPI BFF', col: 1, row: 0 },
-          { id: 'llm', label: 'Anthropic\n(tool use)', col: 2, row: 0 },
-          { id: 'quotes', label: 'Quote tools', col: 1, row: 1 },
-          { id: 'db', label: 'Supabase\n(portfolio, RLS)', col: 0, row: 1 },
-        ],
-        edges: [
-          { from: 'client', to: 'api', label: 'SSE /chat' },
-          { from: 'api', to: 'llm', label: 'stream' },
-          { from: 'api', to: 'quotes', label: 'tool call' },
-          { from: 'client', to: 'db', label: 'RLS read' },
-          { from: 'api', to: 'db', label: 'grounding' },
-        ],
-      },
+        "Streaming isn't just a UX nicety — it completely changes how a user trusts an AI response. Watching it think feels more honest than getting a wall of text.",
       decisions: [
         {
-          title: 'Agentic tool use, not RAG',
-          body: 'Quotes and charts change every second — caching them in a vector store would lie. Letting Claude call a live quote tool mid-response keeps the numbers honest.',
+          title: 'Streaming responses, not batched',
+          body: 'The UI feels alive instead of frozen during inference. Watching tokens appear is the difference between "is this thing working?" and "I trust this."',
         },
         {
-          title: 'FastAPI as a thin BFF',
-          body: 'Anthropic + quote APIs get composed server-side so the client never sees third-party keys and token usage stays auditable.',
+          title: 'Agentic tool use over RAG',
+          body: 'The model fetches real quotes and fundamentals mid-response instead of hallucinating numbers from a stale vector store. Finance data has a half-life of seconds.',
         },
         {
-          title: 'Supabase RLS over custom auth',
-          body: 'Row-level security policies gave per-user portfolio isolation in ~30 lines of SQL instead of a hand-rolled middleware layer.',
+          title: 'Supabase for auth + persistence',
+          body: "Row-level security and managed auth in ~30 lines of SQL. Kept the focus on the interesting parts instead of spinning up a custom backend.",
         },
       ],
       metrics: [
-        { number: '180', suffix: 'ms', label: 'avg time-to-first-token' },
-        { number: '5', suffix: 'x', label: 'fewer reloads vs. non-streaming' },
-        { number: '100', suffix: '%', label: 'RLS-isolated user data' },
+        { number: '2', suffix: 's', label: 'time to first token' },
+        { number: '100', suffix: '%', label: 'live-data grounded answers' },
+        { number: '1', suffix: '', label: 'publicly deployed build' },
       ],
       lessons:
-        'Ship streaming on day one — retrofitting it later rewrites half your UI. Give the model tools instead of stuffing context; live data beats stale context every time.',
+        "Streaming isn't just a UX nicety — it completely changes how a user trusts an AI response. Watching it think feels more honest than a batched wall of text.",
     },
   },
   {
@@ -121,19 +105,75 @@ export const projects = [
     accent: 'terracotta',
     caseStudy: {
       problem:
-        'Online shade-matching is mostly guesswork because photos are a tangle of skin, hair, lips, and background pixels. GlowMatch segments the face first, then asks a vision LLM for product-level matches — not just a hex code.',
+        "Makeup recommendations online are either generic (\"for warm undertones\") or require a human expert. There's no tool that looks at your actual face and gives you specific product guidance — and the ones that try usually sample pixels from your hair or background.",
+      pullQuote:
+        "Sometimes the best ML decision is knowing when not to train your own model. Claude Vision with good prompting outperformed a custom classifier I prototyped in half the time.",
       decisions: [
         {
-          title: 'MediaPipe mask first, vision LLM second',
-          body: 'The 468-point face mesh gives a cheap, local mask so the vision model only sees skin pixels — fewer hallucinations, better matches.',
+          title: 'MediaPipe for landmark detection',
+          body: 'Tone sampling hits cheek + forehead regions specifically — never background or hair. The 468-point mesh is cheap, local, and runs in real time.',
         },
         {
-          title: 'LLM vision over a trained classifier',
-          body: 'A vision LLM returns human-readable product names with context ("warm olive, try X in shade 12"). A closed-set classifier couldn\'t.',
+          title: 'Claude Vision over a custom classifier',
+          body: 'The recommendation reasoning matters as much as the result. A vision LLM returns human-readable explanations; a closed-set classifier only returns a label.',
+        },
+        {
+          title: 'Python backend for CV logic',
+          body: 'Keeps the computer-vision stack (OpenCV, MediaPipe, numpy) native and readable. Browser-side CV would have worked but added friction with no upside.',
         },
       ],
+      metrics: [
+        { number: '30', suffix: 'fps', label: 'live face detection' },
+        { number: '1', suffix: 's', label: 'tone analysis latency' },
+        { number: '0', suffix: '', label: 'training required' },
+      ],
       lessons:
-        'The hardest part of a CV side-project is rarely the model — it\'s the data plumbing. Good masks beat a deeper network.',
+        "Sometimes the best ML decision is knowing when not to train your own model. Claude Vision plus good prompting outperformed a custom classifier I'd prototyped, in half the dev time.",
+    },
+  },
+  {
+    id: 'trippy',
+    tab: 'projects',
+    title: 'Trippy',
+    tagline: 'Group trip planning, built around consensus',
+    blurb:
+      'Collaborative trip planner for groups — vote on flights and stays, rate activities with an 80% consensus rule, and walk away with a day-by-day itinerary everyone agreed on.',
+    stack: ['Next.js 14', 'TypeScript', 'Tailwind CSS', 'React', 'Local Storage'],
+    github: 'https://github.com/stupnd/trippy',
+    highlights: [
+      'Shareable trips via invite link — no auth friction for collaborators.',
+      '80% consensus rule on activities, voting on flights + stays, veto-free.',
+      'Seven core modules: creation, invites, flights, stays, activities, itinerary, public overview.',
+      'In-memory MVP store with a clean swap path to Supabase.',
+    ],
+    role: 'Product + full-stack, hackathon build',
+    accent: 'forest',
+    caseStudy: {
+      problem:
+        "Group trips fall apart in the planning phase — one person books a flight everyone hates, someone vetoes the Airbnb last minute, and the itinerary never gets finished. There's no tool built around group consensus, only solo planning tools used awkwardly by groups.",
+      pullQuote:
+        "The hardest product problem wasn't the tech — it was deciding what \"agreement\" means for a group. The 80% rule was the design insight that made everything else feel fair.",
+      decisions: [
+        {
+          title: '80% consensus, not unanimous',
+          body: "Unanimous kills momentum — one hold-out stalls the whole group. 80% keeps the trip moving while still feeling fair. That threshold was the design insight, not the code.",
+        },
+        {
+          title: 'Invite-via-link, no auth',
+          body: 'Zero friction for collaborators. The person planning the trip is the only one who needs an account; everyone else joins in one click.',
+        },
+        {
+          title: 'In-memory store (for now)',
+          body: 'Intentionally simple for hackathon speed — a clean module boundary so swapping to Supabase is a one-file change when usage justifies it.',
+        },
+      ],
+      metrics: [
+        { number: '7', suffix: '', label: 'core modules shipped' },
+        { number: '80', suffix: '%', label: 'consensus threshold' },
+        { number: '1', suffix: '', label: 'hackathon MVP' },
+      ],
+      lessons:
+        "The hardest product problem wasn't the tech — it was deciding what \"agreement\" means for a group. The 80% rule was the design insight that made everything else feel fair.",
     },
   },
   {
@@ -155,29 +195,16 @@ export const projects = [
     accent: 'sun',
     caseStudy: {
       problem:
-        'Wearable ASL translators usually sit behind a phone server, adding round-trip latency that kills the "real-time" feel. Bridge runs classification on the glove itself so gestures become text in under 100 ms.',
+        'Wearable ASL translators typically route data through a phone server, adding round-trip latency that kills the real-time feel. Bridge moves classification onto the glove itself so gestures become text in under 100 ms.',
       pullQuote:
         'The glove does the inference; the phone is just a screen. That\'s what makes it feel alive.',
-      architecture: {
-        nodes: [
-          { id: 'sensors', label: 'Flex + IMU\n(5 ch, 50 Hz)', col: 0, row: 0 },
-          { id: 'esp', label: 'Arduino Nano\nESP32 + KNN', col: 1, row: 0 },
-          { id: 'ble', label: 'BLE GATT', col: 2, row: 0 },
-          { id: 'app', label: 'React Native app', col: 3, row: 0 },
-        ],
-        edges: [
-          { from: 'sensors', to: 'esp', label: 'ADC' },
-          { from: 'esp', to: 'ble', label: 'packed frame' },
-          { from: 'ble', to: 'app', label: 'BLE' },
-        ],
-      },
       decisions: [
         {
           title: 'On-device classification, not cloud inference',
           body: 'A compact classifier fits comfortably in ESP32 SRAM and keeps end-to-end latency under 100 ms even with BLE overhead.',
         },
         {
-          title: 'React Native, not a native app',
+          title: 'React Native over native for cross-platform parity',
           body: 'One codebase for iOS + Android meant more time on the glove and less on UI plumbing.',
         },
         {
@@ -191,7 +218,7 @@ export const projects = [
         { number: '80', suffix: 'ms', label: 'end-to-end latency' },
       ],
       lessons:
-        'Embedded work is a latency budget. Every stage — sensor → ADC → classifier → BLE → UI — spends milliseconds you don\'t get back. Profile early, trim ruthlessly.',
+        "Embedded work is a latency budget. Every stage — sensor → ADC → classifier → BLE → UI — eats milliseconds you don't get back. Profile early, trim ruthlessly.",
     },
   },
 ]
@@ -204,7 +231,8 @@ export const experience = [
     sub: 'Trend Micro Canada Technologies',
     title: 'Software Developer Co-op',
     dates: 'May – Aug 2026',
-    line: 'AI-driven threat detection and ML pipeline development.',
+    line: "Incoming software developer co-op in the TrendAI division, working on ML pipelines behind AI-driven cybersecurity threat detection. Role starts May 2026 — expected to sit at the intersection of Python, modern ML tooling, and cloud infrastructure.",
+    tags: ['Python', 'ML pipelines', 'Cloud infra', 'Security ML'],
   },
   {
     id: 'solace',
@@ -213,7 +241,8 @@ export const experience = [
     sub: null,
     title: 'Support Engineer Intern',
     dates: 'Sep – Dec 2025',
-    line: 'Debugged distributed event broker systems; guided enterprise cloud architecture across AWS / Azure / GCP.',
+    line: 'Debugged production issues in distributed event broker systems (PubSub+) for enterprise clients. Advised customers on cloud architecture across AWS, Azure, and GCP; built strong intuition for pub/sub + event-driven systems at scale.',
+    tags: ['PubSub+', 'Event brokers', 'AWS', 'Azure', 'GCP'],
   },
   {
     id: 'nrcan',
@@ -222,7 +251,8 @@ export const experience = [
     sub: null,
     title: 'Software Engineering Intern',
     dates: 'May 2024 – Aug 2025 · 3 terms',
-    line: 'Oracle SQL data work, Salesforce automation, and C# / Apex data pipelines.',
+    line: 'Three co-op terms building internal tooling for a federal science organization. Shipped Salesforce automation workflows that cut manual processing time, optimized Oracle DB queries, and wrote C# + Apex data pipelines tying the two worlds together.',
+    tags: ['Salesforce', 'Apex', 'C#', 'Oracle SQL', 'SQL Server'],
   },
 ]
 
@@ -318,6 +348,7 @@ export function buildKnowledgeDump() {
   experience.forEach((e) => {
     lines.push(`## ${e.company}${e.sub ? ` (${e.sub})` : ''} — ${e.title} [id:${e.id}]`)
     lines.push(`${e.dates}: ${e.line}`)
+    if (e.tags?.length) lines.push(`Stack: ${e.tags.join(', ')}`)
     lines.push('')
   })
   lines.push(`# IEEE WIE`)
@@ -339,6 +370,7 @@ export function buildKnowledgeDump() {
 export const citations = {
   sage: { tab: 'projects', label: 'Sage' },
   glowmatch: { tab: 'projects', label: 'GlowMatch' },
+  trippy: { tab: 'projects', label: 'Trippy' },
   bridge: { tab: 'projects', label: 'Bridge' },
   projects: { tab: 'projects', label: 'Projects' },
   trendai: { tab: 'experience', label: 'TrendAI' },
@@ -353,7 +385,7 @@ export const citations = {
 
 export const suggestedPrompts = [
   'Tell me about Sage',
-  'Is she available for new grad?',
+  'What did she build at Trippy?',
   "What's her hardware experience?",
-  'What did she build for WIE?',
+  'Is she available for new grad?',
 ]

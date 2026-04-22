@@ -1,7 +1,5 @@
 import { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
-import ArchDiagram from './ArchDiagram'
-import Squiggle from './Squiggle'
 import { gsap } from '../lib/scroll'
 import { prefersReducedMotion } from '../hooks/useReducedMotion'
 
@@ -219,33 +217,6 @@ export default function ProjectCaseStudy({ project, onBack }) {
               &ldquo;{caseStudy.pullQuote}&rdquo;
             </motion.blockquote>
           ) : null}
-        </section>
-      ) : null}
-
-      {/* Architecture */}
-      {caseStudy?.architecture ? (
-        <section className="bg-ink-card py-20 md:py-28">
-          <div className="mx-auto max-w-6xl px-5 md:px-8">
-            <p className={`eyebrow ${accent.text}`}>Architecture</p>
-            <h3 className="f-serif mt-6 max-w-3xl text-[clamp(24px,3vw,40px)] font-bold leading-[1.2] tracking-tight">
-              How{' '}
-              <span className="relative inline-block">
-                {title} talks to itself.
-                <Squiggle
-                  stroke={accent.hex}
-                  strokeWidth={2}
-                  className="pointer-events-none absolute -bottom-1 left-0 w-full md:-bottom-2"
-                />
-              </span>
-            </h3>
-            <div className="mt-12 rounded-2xl bg-bg/5 p-6 ring-1 ring-bg/10 md:p-10">
-              <ArchDiagram
-                nodes={caseStudy.architecture.nodes}
-                edges={caseStudy.architecture.edges}
-                accent={accent.hex}
-              />
-            </div>
-          </div>
         </section>
       ) : null}
 
