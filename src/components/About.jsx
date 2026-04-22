@@ -1,12 +1,14 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import PillTag from './PillTag'
-import Polaroid from './Polaroid'
 import { HandArrow } from './Doodles'
 import useReveal from '../hooks/useReveal'
 import { bio } from '../data/knowledge'
 import BeyondPhotos from './BeyondPhotos'
 import WIE from './WIE'
+
+const ME_PHOTO_PNG = '/photos/beyond/me2.png'
+const ME_PHOTO_JPG = '/photos/beyond/me.JPG'
 
 const viewOnce = { once: true, amount: 0.15 }
 
@@ -36,89 +38,134 @@ const currently = [
   { text: 'Open to new-grad SWE / AI, Jan 2027' },
 ]
 
+const cutoutImgBase =
+  'mx-auto block w-full max-w-[280px] object-contain object-top md:mx-0 md:max-h-[min(72vh,540px)] md:max-w-none'
+
 export default function About() {
   const headlineRef = useRef(null)
+  const [mePhotoSrc, setMePhotoSrc] = useState(ME_PHOTO_PNG)
+  const isJpgFallback = mePhotoSrc === ME_PHOTO_JPG
   useReveal(headlineRef, { stagger: 0.05, y: 30, duration: 0.75 })
+
+  const cutoutImgClass = [
+    cutoutImgBase,
+    isJpgFallback
+      ? 'rounded-2xl object-cover object-center shadow-[0_12px_40px_rgba(17,17,17,0.12)] ring-1 ring-ink/10'
+      : 'drop-shadow-[0_8px_28px_rgba(17,17,17,0.14)]',
+  ].join(' ')
+
+  const cutoutBottomFade = {
+    WebkitMaskImage:
+      'linear-gradient(to bottom, #000 0%, #000 calc(100% - 3.5rem), rgba(0,0,0,0.35) calc(100% - 1.25rem), transparent 100%)',
+    maskImage:
+      'linear-gradient(to bottom, #000 0%, #000 calc(100% - 3.5rem), rgba(0,0,0,0.35) calc(100% - 1.25rem), transparent 100%)',
+    WebkitMaskSize: '100% 100%',
+    maskSize: '100% 100%',
+    WebkitMaskRepeat: 'no-repeat',
+    maskRepeat: 'no-repeat',
+  }
+
+  const cutoutPhoto = (extraWrapClass) => (
+    <div className={extraWrapClass}>
+      <div
+        className={[
+          'overflow-hidden',
+          isJpgFallback ? 'rounded-2xl' : '',
+        ]
+          .filter(Boolean)
+          .join(' ')}
+      >
+        <motion.img
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1], delay: 0.15 }}
+          src={mePhotoSrc}
+          alt="Stuti Pandya"
+          onError={() => setMePhotoSrc(ME_PHOTO_JPG)}
+          className={cutoutImgClass}
+          style={cutoutBottomFade}
+          decoding="async"
+        />
+      </div>
+      <p className="mt-2 text-center text-sm text-muted md:text-left">that&apos;s me :)</p>
+    </div>
+  )
 
   return (
     <>
       <section className="min-h-full bg-bg">
         <div className="relative mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-20">
-          <motion.div
-            initial={{ opacity: 0, y: -12, rotate: -2 }}
-            animate={{ opacity: 1, y: 0, rotate: 2 }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.4 }}
-            className="pointer-events-none absolute right-6 top-10 z-10 hidden md:block"
-            style={{ width: '200px' }}
-          >
-            <Polaroid
-              src="/photos/beyond/me.JPG"
-              caption="that's me :)"
-              alt="Stuti"
-            />
-          </motion.div>
+          <div className="grid gap-10 md:grid-cols-[minmax(0,1fr)_minmax(220px,320px)] md:items-start md:gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(260px,360px)]">
+            <div className="min-w-0">
+              <motion.p
+                initial="hidden"
+                whileInView="show"
+                viewport={viewOnce}
+                variants={fadeUp(0)}
+                className="eyebrow text-terracotta"
+              >
+                About
+              </motion.p>
 
-          <motion.p
-            initial="hidden"
-            whileInView="show"
-            viewport={viewOnce}
-            variants={fadeUp(0)}
-            className="eyebrow text-terracotta"
-          >
-            About
-          </motion.p>
+              <h2
+                ref={headlineRef}
+                className="f-serif mt-8 max-w-4xl text-[clamp(36px,5vw,72px)] font-bold leading-[1.2] tracking-tight text-ink"
+              >
+                Hi, I&apos;m Stuti. I work on hardware, software, and the glue between them.
+              </h2>
 
-          <h2
-            ref={headlineRef}
-            className="f-serif mt-8 max-w-4xl text-[clamp(36px,5vw,72px)] font-bold leading-[1.2] tracking-tight text-ink"
-          >
-            Hi, I&apos;m Stuti. I work on hardware, software, and the glue between them.
-          </h2>
+              <motion.p
+                initial="hidden"
+                whileInView="show"
+                viewport={viewOnce}
+                variants={fadeUp(0.1)}
+                className="mt-10 max-w-2xl text-base leading-[1.75] text-ink/85 md:text-[17px]"
+              >
+                Fourth-year Computer Engineering at uOttawa, graduating December 2026. Most of my
+                time goes to AI and web apps, embedded class projects, and side builds that started
+                as “what if.” I co-run{' '}
+                <a
+                  href="https://www.instagram.com/lilbytes.tech/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="underline decoration-terracotta decoration-2 underline-offset-4 hover:text-terracotta"
+                >
+                  Lil Bytes
+                </a>{' '}
+                with Krisha: short Instagram posts that unpack CS ideas for people outside the
+                lecture hall. IEEE WIE Chair this year. More on student leadership in the{' '}
+                <a
+                  href="#wie"
+                  className="underline decoration-terracotta decoration-2 underline-offset-4 hover:text-terracotta"
+                >
+                  IEEE WIE section
+                </a>{' '}
+                below. Ottawa based. Grace Hopper this fall.
+              </motion.p>
 
-          <motion.p
-            initial="hidden"
-            whileInView="show"
-            viewport={viewOnce}
-            variants={fadeUp(0.1)}
-            className="mt-10 max-w-2xl text-base leading-[1.75] text-ink/85 md:text-[17px]"
-          >
-            Fourth-year Computer Engineering at uOttawa, graduating December 2026. Most of my
-            time goes to AI and web apps, embedded class projects, and side builds that started as
-            “what if.” I co-run{' '}
-            <a
-              href="https://www.instagram.com/lilbytes.tech/"
-              target="_blank"
-              rel="noreferrer"
-              className="underline decoration-terracotta decoration-2 underline-offset-4 hover:text-terracotta"
-            >
-              Lil Bytes
-            </a>{' '}
-            with Krisha: short Instagram posts that unpack CS ideas for people outside the lecture
-            hall. IEEE WIE Chair this year. More on student leadership in the{' '}
-            <a
-              href="#wie"
-              className="underline decoration-terracotta decoration-2 underline-offset-4 hover:text-terracotta"
-            >
-              IEEE WIE section
-            </a>{' '}
-            below. Ottawa based. Grace Hopper this fall.
-          </motion.p>
+              <div className="mt-8 md:hidden">{cutoutPhoto('')}</div>
 
-          <motion.ul
-            initial="hidden"
-            whileInView="show"
-            viewport={viewOnce}
-            variants={fadeUp(0.15)}
-            className="mt-8 flex flex-wrap gap-3"
-          >
-            {skills.map((s) => (
-              <li key={s.label}>
-                <PillTag tone={s.tone} rotate={s.rotate} size="md">
-                  {s.label}
-                </PillTag>
-              </li>
-            ))}
-          </motion.ul>
+              <motion.ul
+                initial="hidden"
+                whileInView="show"
+                viewport={viewOnce}
+                variants={fadeUp(0.15)}
+                className="mt-8 flex flex-wrap gap-3"
+              >
+                {skills.map((s) => (
+                  <li key={s.label}>
+                    <PillTag tone={s.tone} rotate={s.rotate} size="md">
+                      {s.label}
+                    </PillTag>
+                  </li>
+                ))}
+              </motion.ul>
+            </div>
+
+            <div className="hidden min-w-0 md:block md:pt-2 lg:-mt-2 lg:pt-0">
+              {cutoutPhoto('md:sticky md:top-24')}
+            </div>
+          </div>
 
           <motion.aside
             initial="hidden"
