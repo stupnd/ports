@@ -184,10 +184,10 @@ export default function Hero() {
               />
             </motion.div>
           ) : null}
-          <div className="w-full max-md:flex max-md:justify-center max-md:px-3">
+          <div className="w-full max-md:flex max-md:justify-center max-md:px-2">
             <h1
               ref={nameBubbleRef}
-              className="f-display pointer-events-none relative inline-block max-md:-rotate-[0.75deg] max-md:max-w-[min(288px,calc(100vw-2.5rem))] rounded-[28px] bg-card px-5 py-4 text-ink text-[clamp(46px,14vw,156px)] font-black leading-[0.95] tracking-[-0.02em] ring-1 ring-ink/10 shadow-[0_22px_50px_-18px_rgba(232,82,26,0.18),0_20px_60px_-28px_rgba(17,17,17,0.32)] max-md:px-4 max-md:py-3.5 max-md:text-[clamp(32px,9.2vw,52px)] max-md:ring-2 max-md:ring-terracotta/20 md:max-w-none md:rotate-0 md:rounded-[40px] md:px-8 md:py-6 md:leading-[0.92] md:shadow-[0_20px_60px_-28px_rgba(17,17,17,0.35)] md:ring-1"
+              className="f-display pointer-events-none relative inline-block max-md:-rotate-[0.75deg] max-md:max-w-[min(380px,calc(100vw-1.5rem))] rounded-[28px] bg-card px-5 py-4 text-ink text-[clamp(46px,14vw,156px)] font-black leading-[0.95] tracking-[-0.02em] ring-1 ring-ink/10 shadow-[0_22px_50px_-18px_rgba(232,82,26,0.18),0_20px_60px_-28px_rgba(17,17,17,0.32)] max-md:text-[clamp(40px,12.5vw,72px)] max-md:ring-2 max-md:ring-terracotta/20 md:max-w-none md:rotate-0 md:rounded-[40px] md:px-8 md:py-6 md:leading-[0.92] md:shadow-[0_20px_60px_-28px_rgba(17,17,17,0.35)] md:ring-1"
             >
               <span
                 aria-hidden
