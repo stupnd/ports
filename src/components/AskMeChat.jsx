@@ -252,10 +252,7 @@ export default function AskMeChat() {
       <div className="flex items-baseline justify-between gap-4">
         <div>
           <p className="eyebrow text-terracotta">Ask me anything</p>
-          <h2 className="f-serif mt-3 text-[clamp(26px,3.5vw,42px)] font-bold leading-[1.15] tracking-tight text-ink">
-            A chatbot trained on Stuti&apos;s resume.
-          </h2>
-          <p className="mt-2 max-w-lg text-sm text-muted md:text-[15px]">
+          <p className="mt-3 max-w-lg text-sm text-muted md:text-[15px]">
             Try &ldquo;tell me about Sage&rdquo; or &ldquo;is she available for new grad?&rdquo;
           </p>
         </div>
