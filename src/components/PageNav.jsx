@@ -30,7 +30,6 @@ export default function PageNav({ tabs, activeTab, onChange }) {
             type="button"
             onClick={goPrev}
             disabled={!prev}
-            data-cursor={prev ? 'view' : undefined}
             aria-label={prev ? `Previous page: ${prev.label}` : 'No previous page'}
             className="group inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-bg/70 transition-all hover:bg-bg/10 hover:text-bg disabled:cursor-not-allowed disabled:opacity-25 disabled:hover:bg-transparent"
           >
@@ -57,7 +56,6 @@ export default function PageNav({ tabs, activeTab, onChange }) {
           <button
             type="button"
             onClick={goNext}
-            data-cursor="view"
             aria-label={isLast ? 'Back to home' : `Next page: ${next.label}`}
             className="group relative inline-flex items-center gap-1.5 overflow-hidden rounded-full px-3.5 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-ink transition-all hover:-translate-y-0.5"
             style={{ backgroundColor: nextAccent }}

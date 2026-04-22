@@ -13,9 +13,9 @@ const EMAIL = 'stuti.pandya0@gmail.com'
 const channels = [
   {
     label: 'LinkedIn',
-    handle: '@stutipandya',
+    handle: 'stuti-pandya',
     cta: "let's connect",
-    href: 'https://www.linkedin.com/in/stutipandya',
+    href: 'https://www.linkedin.com/in/stuti-pandya-6a8bab258',
     icon: (
       <path d="M4 9h4v12H4zM6 4a2 2 0 1 1 0 4 2 2 0 0 1 0-4zM10 9h4v2c.6-1.2 2-2.3 4-2.3 3.3 0 4 2.1 4 5.1V21h-4v-6.2c0-1.5-.6-2.5-2-2.5s-2.2.9-2.2 2.5V21h-4z" />
     ),
@@ -56,7 +56,6 @@ const channels = [
 const statusPills = [
   { label: 'Ottawa, Canada', glyph: '◎' },
   { label: 'Open for Jan 2027', glyph: '✦' },
-  { label: 'Replies in ~24h', glyph: '⏱' },
 ]
 
 const viewOnce = { once: true, amount: 0.2 }
