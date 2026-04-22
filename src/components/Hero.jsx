@@ -1,12 +1,10 @@
-import { lazy, Suspense, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import MarqueeTicker from './MarqueeTicker'
 import MagneticButton from './MagneticButton'
 import PhysicsOrbs from './PhysicsOrbs'
 import { HandCircle } from './Doodles'
 import useReducedMotion from '../hooks/useReducedMotion'
-
-const AskMeChat = lazy(() => import('./AskMeChat'))
 
 const words = ['STUTI', 'PANDYA']
 
@@ -191,12 +189,11 @@ export default function Hero() {
         </motion.div>
       </div>
 
-      <MarqueeTicker tone="light" className="pointer-events-none relative z-10" />
-
-      <div className="pointer-events-auto relative mx-auto w-full max-w-6xl px-5 pb-14 pt-6 md:px-8 md:pb-20 md:pt-8">
-        <Suspense fallback={null}>
-          <AskMeChat />
-        </Suspense>
+      <div className="mt-auto pb-6 md:pb-10">
+        <MarqueeTicker
+          tone="light"
+          className="pointer-events-none relative z-10"
+        />
       </div>
     </section>
   )

@@ -45,8 +45,8 @@ function App() {
     if (root) root.scrollTop = 0
   }, [activeTab, notFound])
 
-  // Global navigate bus — lets AskMeChat citation chips, the command palette,
-  // and any deep-link trigger a tab switch without prop-drilling.
+  // Global navigate bus — lets the command palette and any deep-link trigger
+  // a tab switch without prop-drilling.
   useEffect(() => {
     const onNavigate = (e) => {
       const next = e?.detail

@@ -1,8 +1,6 @@
 // Single source of truth for Stuti's portfolio content.
-// Used by: (1) the /api/chat function to ground the LLM's answers,
-// and (2) UI components (AskMeChat citation chips, future case studies).
-// Keep entries small and factual — the whole file gets stuffed into a
-// system prompt, so it should stay under ~8 KB.
+// Consumed by UI components (project case studies, experience cards, etc.).
+// Keep entries small and factual.
 
 export const bio = {
   name: 'Stuti Pandya',
@@ -315,77 +313,3 @@ export const faq = [
   },
 ]
 
-// Compact string dump used to ground the LLM. Keep short and dense.
-export function buildKnowledgeDump() {
-  const lines = []
-  lines.push(`# ${bio.name}`)
-  lines.push(`Location: ${bio.location}. ${bio.relocation}`)
-  lines.push(`School: ${bio.school} — ${bio.degree}`)
-  lines.push(`GPA: ${bio.gpa}`)
-  lines.push(`Graduation: ${bio.graduation}`)
-  lines.push(`Availability: ${bio.availability}`)
-  lines.push(`Currently: ${bio.currentRole}`)
-  lines.push(`Target companies: ${bio.targetCompanies.join(', ')}`)
-  lines.push(`Email: ${bio.email}`)
-  lines.push(`GitHub: ${bio.links.github}`)
-  lines.push(`Tagline: ${bio.tagline}`)
-  lines.push(`Summary: ${bio.summary}`)
-  lines.push(`Working style: ${bio.workingStyle}`)
-  lines.push('')
-  lines.push(`# Skills`)
-  Object.entries(skills).forEach(([k, v]) => lines.push(`- ${k}: ${v.join(', ')}`))
-  lines.push('')
-  lines.push(`# Projects`)
-  projects.forEach((p) => {
-    lines.push(`## ${p.title} — ${p.tagline} [id:${p.id}]`)
-    lines.push(`Role: ${p.role}`)
-    lines.push(`Stack: ${p.stack.join(', ')}`)
-    lines.push(`GitHub: ${p.github}${p.live ? ` | Live: ${p.live}` : ''}`)
-    p.highlights.forEach((h) => lines.push(`- ${h}`))
-    lines.push('')
-  })
-  lines.push(`# Work Experience`)
-  experience.forEach((e) => {
-    lines.push(`## ${e.company}${e.sub ? ` (${e.sub})` : ''} — ${e.title} [id:${e.id}]`)
-    lines.push(`${e.dates}: ${e.line}`)
-    if (e.tags?.length) lines.push(`Stack: ${e.tags.join(', ')}`)
-    lines.push('')
-  })
-  lines.push(`# IEEE WIE`)
-  lines.push(`${wie.title} — ${wie.role}`)
-  lines.push(wie.summary)
-  wie.highlights.forEach((h) => lines.push(`- ${h}`))
-  lines.push('')
-  lines.push(`# Beyond the code`)
-  lines.push(beyond.summary)
-  lines.push('')
-  lines.push(`# Common questions`)
-  faq.forEach((item) => lines.push(`Q: ${item.q}\nA: ${item.a}`))
-  return lines.join('\n')
-}
-
-// Citation registry — maps canonical ids to their tab + a short label.
-// The LLM is instructed to emit [[cite:id]] tokens; the UI parses them
-// into clickable chips that switch the active portfolio tab.
-export const citations = {
-  sage: { tab: 'projects', label: 'Sage' },
-  glowmatch: { tab: 'projects', label: 'GlowMatch' },
-  trippy: { tab: 'projects', label: 'Trippy' },
-  bridge: { tab: 'projects', label: 'Bridge' },
-  projects: { tab: 'projects', label: 'Projects' },
-  trendai: { tab: 'experience', label: 'TrendAI' },
-  solace: { tab: 'experience', label: 'Solace' },
-  nrcan: { tab: 'experience', label: 'Natural Resources Canada' },
-  experience: { tab: 'experience', label: 'Experience' },
-  wie: { tab: 'wie', label: 'IEEE WIE' },
-  about: { tab: 'about', label: 'About Stuti' },
-  beyond: { tab: 'beyond', label: 'Beyond the code' },
-  contact: { tab: 'contact', label: 'Contact' },
-}
-
-export const suggestedPrompts = [
-  'Tell me about Sage',
-  'What did she build at Trippy?',
-  "What's her hardware experience?",
-  'Is she available for new grad?',
-]
