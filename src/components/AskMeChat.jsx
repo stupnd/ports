@@ -1,8 +1,6 @@
-import { lazy, Suspense, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { citations, suggestedPrompts } from '../data/knowledge'
-
-const NowBuilding = lazy(() => import('./NowBuilding'))
 
 // Embedded "Ask my portfolio" chat.
 // Streams tokens from /api/chat. Answers reference sections via [[cite:id]]
@@ -352,10 +350,6 @@ export default function AskMeChat() {
           Demo mode — answers are curated. Live streaming chat activates on the deployed build.
         </p>
       ) : null}
-
-      <Suspense fallback={null}>
-        <NowBuilding />
-      </Suspense>
     </section>
   )
 }

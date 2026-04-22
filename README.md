@@ -25,14 +25,12 @@ The "Ask my portfolio" chat on Home is powered by `api/chat.ts`. Configure one o
 | `OPENAI_API_KEY`  | if OpenAI| —                             |                                              |
 | `OPENAI_MODEL`    | no       | `gpt-4o-mini`                 |                                              |
 | `ALLOW_CHAT`      | no       | _unset (enabled)_             | Set to `false` to kill-switch the chat.      |
-| `GITHUB_USERNAME` | no       | `stupnd`                      | Drives the "Now building" strip on Home.     |
 
 If no key is configured, the chat degrades gracefully to canned fallback answers so the UI never breaks.
 
 ## Endpoints
 
 - `POST /api/chat` — streaming LLM chat grounded on `src/data/knowledge.js`. Rate-limited (10 msgs/min per IP).
-- `GET /api/github` — cached public GitHub activity (last 3 commits + 53-week contribution heatmap). 15-min in-memory + edge cache.
 
 ## Keyboard
 
