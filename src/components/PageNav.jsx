@@ -1,9 +1,54 @@
+import { useCallback, useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
+
+const SCROLLER_ID = 'tab-panel'
+/** px from bottom — counts as “reached the end” for showing the pill */
+const END_THRESHOLD = 80
+
+function isScrolledToBottom(el) {
+  if (!el) return false
+  const { scrollTop, scrollHeight, clientHeight } = el
+  const overflow = scrollHeight - clientHeight
+  if (overflow <= 2) return true
+  return scrollTop >= overflow - END_THRESHOLD
+}
 
 // Floating next/prev pill that lives at the App level so every tab inherits
 // it automatically. Talks back to App via the same `portfolio:navigate` event
-// bus used by the command palette.
+// bus used by the command palette. Hidden until the tab scroller is at the
+// bottom (or the page has no overflow).
 export default function PageNav({ tabs, activeTab, onChange }) {
+  const [atBottom, setAtBottom] = useState(false)
+
+  const update = useCallback(() => {
+    const el = document.getElementById(SCROLLER_ID)
+    setAtBottom(isScrolledToBottom(el))
+  }, [])
+
+  useEffect(() => {
+    const el = document.getElementById(SCROLLER_ID)
+    if (!el) return undefined
+
+    setAtBottom(isScrolledToBottom(el))
+
+    el.addEventListener('scroll', update, { passive: true })
+    window.addEventListener('resize', update)
+
+    const ro = new ResizeObserver(update)
+    ro.observe(el)
+    const first = el.firstElementChild
+    if (first) ro.observe(first)
+
+    const t = window.setTimeout(update, 120)
+
+    return () => {
+      window.clearTimeout(t)
+      el.removeEventListener('scroll', update)
+      window.removeEventListener('resize', update)
+      ro.disconnect()
+    }
+  }, [activeTab, update])
+
   const idx = tabs.findIndex((t) => t.id === activeTab)
   if (idx < 0) return null
 
@@ -18,14 +63,15 @@ export default function PageNav({ tabs, activeTab, onChange }) {
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-20 z-30 flex justify-center px-5 md:bottom-6">
       <AnimatePresence mode="wait">
-        <motion.div
-          key={activeTab}
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 20, opacity: 0 }}
-          transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-          className="pointer-events-auto flex items-center gap-1 rounded-full bg-ink/90 p-1 text-bg shadow-[0_14px_40px_-12px_rgba(17,17,17,0.5)] ring-1 ring-bg/10 backdrop-blur-md"
-        >
+        {atBottom ? (
+          <motion.div
+            key={activeTab}
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 16, opacity: 0 }}
+            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            className="pointer-events-auto flex items-center gap-1 rounded-full bg-ink/90 p-1 text-bg shadow-[0_14px_40px_-12px_rgba(17,17,17,0.5)] ring-1 ring-bg/10 backdrop-blur-md"
+          >
           <button
             type="button"
             onClick={goPrev}
@@ -87,6 +133,7 @@ export default function PageNav({ tabs, activeTab, onChange }) {
             </svg>
           </button>
         </motion.div>
+        ) : null}
       </AnimatePresence>
     </div>
   )

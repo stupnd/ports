@@ -154,37 +154,35 @@ export default function Hero() {
         />
       )}
 
-      {/* Mobile: tagline + CTAs above the fold before the name block */}
-      {isMobile ? (
-        <div className="pointer-events-auto relative z-20 shrink-0 px-5 pt-6 md:hidden">
-          <p className="max-w-md text-sm leading-snug text-muted">{bio.tagline}</p>
-          <div className="mt-4 flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onClick={goContact}
-              className="relative inline-flex items-center gap-2 rounded-full bg-terracotta/10 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-terracotta ring-1 ring-terracotta/20"
-            >
-              <span aria-hidden>✦</span>
-              New grad · Jan 2027
-            </button>
-            <a
-              href="/Stuti_Pandya_Resume.pdf"
-              download="Stuti_Pandya_Resume.pdf"
-              className="inline-flex items-center rounded-full bg-card px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-ink ring-1 ring-ink/10"
-            >
-              Resume
-            </a>
-          </div>
-        </div>
-      ) : null}
-
       <div className="pointer-events-none relative flex flex-1 items-center md:block md:flex-none">
         <motion.div
           variants={container}
           initial="hidden"
           animate="show"
-          className="relative mx-auto w-full max-w-6xl px-5 md:px-8 md:pb-8 md:pt-20"
+          className="relative mx-auto flex w-full max-w-6xl flex-col items-center px-5 max-md:py-4 md:block md:px-8 md:pb-8 md:pt-20"
         >
+          {isMobile ? (
+            <div className="pointer-events-auto z-20 mb-6 flex w-full max-w-sm flex-col items-center gap-4 text-center">
+              <p className="text-pretty text-sm leading-snug text-muted">{bio.tagline}</p>
+              <div className="flex flex-wrap justify-center gap-2">
+                <button
+                  type="button"
+                  onClick={goContact}
+                  className="relative inline-flex items-center gap-2 rounded-full bg-terracotta/10 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-terracotta ring-1 ring-terracotta/20"
+                >
+                  <span aria-hidden>✦</span>
+                  New grad · Jan 2027
+                </button>
+                <a
+                  href="/Stuti_Pandya_Resume.pdf"
+                  download="Stuti_Pandya_Resume.pdf"
+                  className="inline-flex items-center rounded-full bg-card px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-ink ring-1 ring-ink/10"
+                >
+                  Resume
+                </a>
+              </div>
+            </div>
+          ) : null}
           <h1
             ref={nameBubbleRef}
             className="f-display pointer-events-none relative inline-block rounded-[28px] bg-card px-5 py-4 text-ink text-[clamp(44px,10vw,156px)] font-black leading-[0.95] tracking-[-0.02em] ring-1 ring-ink/10 shadow-[0_20px_60px_-28px_rgba(17,17,17,0.35)] md:rounded-[40px] md:px-8 md:py-6 md:leading-[0.92]"
