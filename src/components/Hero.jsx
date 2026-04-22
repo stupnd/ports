@@ -122,34 +122,16 @@ export default function Hero() {
       <div className="pointer-events-none relative mx-auto w-full max-w-6xl px-5 pb-6 pt-14 md:px-8 md:pb-8 md:pt-20">
         <motion.div variants={container} initial="hidden" animate="show" className="relative">
           <h1
-            className="f-display pointer-events-none relative inline-block text-[clamp(64px,10vw,140px)] font-black leading-[0.92] tracking-[-0.02em]"
+            className="f-display pointer-events-none relative inline-block text-ink text-[clamp(64px,10vw,140px)] font-black leading-[0.92] tracking-[-0.02em]"
             style={{
-              // White letter faces filled with a terracotta vector grid
-              // (background-clip: text), extruded via stacked terracotta
-              // shadows for a blueprint / linear-algebra feel.
-              backgroundImage: `
-                linear-gradient(to right, rgba(232,82,26,0.9) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(232,82,26,0.9) 1px, transparent 1px),
-                linear-gradient(#ffffff, #ffffff)
-              `,
-              backgroundSize: '14px 14px, 14px 14px, 100% 100%',
-              backgroundPosition: '0 0, 0 0, 0 0',
-              WebkitBackgroundClip: 'text',
-              backgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              color: 'transparent',
+              // Solid ink letters lifted with a soft terracotta glow + a short
+              // offset drop, so the name reads as a bold statement without
+              // the heavy 3D extrusion.
               textShadow: [
-                '1px 1px 0 #e8521a',
-                '2px 2px 0 #cf4312',
-                '3px 3px 0 #b6350a',
-                '4px 4px 0 #9a2a06',
-                '5px 5px 0 #7c1f02',
-                '6px 6px 0 #5e1500',
-                '8px 12px 24px rgba(17,17,17,0.22)',
+                '3px 3px 0 rgba(232,82,26,0.95)',
+                '6px 6px 0 rgba(232,82,26,0.35)',
+                '0 10px 24px rgba(232,82,26,0.18)',
               ].join(', '),
-              // Subtle ink outline keeps the white faces from dissolving into
-              // the cream page background.
-              WebkitTextStroke: '1px #111111',
             }}
           >
             <span className="sr-only">Stuti Pandya</span>
