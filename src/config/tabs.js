@@ -1,5 +1,6 @@
 import Hero from '../components/Hero'
 import About from '../components/About'
+import WIE from '../components/WIE'
 import Projects from '../components/Projects'
 import Experience from '../components/Experience'
 import Contact from '../components/Contact'
@@ -19,7 +20,14 @@ export const tabs = [
     label: 'About',
     component: About,
     accent: '#2A4BCC',
-    hint: 'Bio, photos, IEEE WIE (below)',
+    hint: 'Bio, photos, beyond',
+  },
+  {
+    id: 'wie',
+    label: 'IEEE WIE',
+    component: WIE,
+    accent: '#9B5DE5',
+    hint: 'Workshops, hackathon, mentorship',
   },
   {
     id: 'projects',

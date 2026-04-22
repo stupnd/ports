@@ -5,7 +5,6 @@ import { HandArrow } from './Doodles'
 import useReveal from '../hooks/useReveal'
 import { bio } from '../data/knowledge'
 import BeyondPhotos from './BeyondPhotos'
-import WIE from './WIE'
 
 const ME_PHOTO_PNG = '/photos/beyond/me2.png'
 const ME_PHOTO_JPG = '/photos/beyond/me.JPG'
@@ -151,14 +150,19 @@ export default function About() {
                   Lil Bytes
                 </a>{' '}
                 with Krisha: short Instagram posts that unpack CS ideas for people outside the
-                lecture hall. IEEE WIE Chair this year. More on student leadership in the{' '}
-                <a
-                  href="#wie"
-                  className="underline decoration-terracotta decoration-2 underline-offset-4 hover:text-terracotta"
+                lecture hall. IEEE WIE Chair this year. More on student leadership on the{' '}
+                <button
+                  type="button"
+                  onClick={() =>
+                    window.dispatchEvent(
+                      new CustomEvent('portfolio:navigate', { detail: 'wie' })
+                    )
+                  }
+                  className="cursor-pointer border-0 bg-transparent p-0 text-base leading-[1.75] text-ink/85 underline decoration-terracotta decoration-2 underline-offset-4 hover:text-terracotta md:text-[17px]"
                 >
-                  IEEE WIE section
-                </a>{' '}
-                below. Ottawa based. Grace Hopper this fall.
+                  IEEE WIE
+                </button>{' '}
+                page. Ottawa based. Grace Hopper this fall.
               </motion.p>
 
               <div className="mt-8 md:hidden">{cutoutPhoto('')}</div>
@@ -235,10 +239,6 @@ export default function About() {
       </section>
 
       <BeyondPhotos />
-
-      <div id="wie" className="scroll-mt-6 md:scroll-mt-8">
-        <WIE embedded />
-      </div>
     </>
   )
 }

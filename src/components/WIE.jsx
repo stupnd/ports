@@ -208,11 +208,9 @@ function GalleryPhoto({ src, alt, minHeight = 280 }) {
   )
 }
 
-export default function WIE({ embedded = false }) {
+export default function WIE() {
   return (
-    <section
-      className={`${embedded ? 'min-h-0' : 'min-h-full'} bg-wie-bg text-wie-text`}
-    >
+    <section className="min-h-full bg-wie-bg text-wie-text">
       <div className="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
         <div className="grid gap-14 md:grid-cols-[1.05fr_1fr] md:items-start md:gap-16">
           <motion.div
