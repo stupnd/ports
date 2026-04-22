@@ -1,28 +1,41 @@
 // Vercel Serverless Function — GET /api/github
 // Returns a compact summary of Stuti's public GitHub activity:
 //   - last 3 commit messages (with repo, relative time, sha)
-//   - 53-week × 7-day contribution heatmap grid (counts only, no dates)
+//   - 53-week × 7-day contribution heatmap grid
 //
-// Why the shape is small: the NowBuilding strip renders it directly and we
-// want the JSON to be trivially cacheable at the edge.
-//
-// The contribution graph is scraped from github.com's public contributions
-// page (no auth required). If that scrape fails we degrade gracefully to
-// `null` for contributions and the UI shows just the commit list.
+// Strategy (kept simple to fit inside Vercel's serverless budget):
+//   1. Ask GitHub for the user's 3 most-recently-pushed public repos
+//      (/users/:user/repos?sort=pushed).
+//   2. Fetch 3 commits from each in parallel (/repos/:r/commits?author=:u).
+//      This works regardless of the user's commit-email privacy setting.
+//   3. Merge, sort by date, take the top 3.
+//   4. In parallel, scrape the public contributions page for the heatmap.
+//   5. Wrap the WHOLE handler in a 7s overall budget so we never time out.
 
 export const config = {
   runtime: 'nodejs',
-  maxDuration: 15,
+  maxDuration: 10,
 }
 
+// Bump this when the function meaningfully changes — makes it easy to verify
+// the deployed build matches the latest commit by curling the endpoint.
+const FN_VERSION = '2026-04-21-03'
+
 const USERNAME = process.env.GITHUB_USERNAME || 'stupnd'
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN || ''
 const CACHE_TTL_MS = 15 * 60 * 1000
+const OVERALL_BUDGET_MS = 7000
+
 let cache: { at: number; payload: unknown } | null = null
 
-interface GithubEvent {
-  type: string
-  created_at: string
-  repo?: { name: string }
+interface RepoSummary {
+  full_name: string
+  pushed_at: string
+}
+
+interface RepoCommit {
+  sha: string
+  commit: { message: string; author: { date: string } }
 }
 
 interface CommitEntry {
@@ -31,14 +44,6 @@ interface CommitEntry {
   when: string
   sha: string
   url: string
-}
-
-interface RepoCommit {
-  sha: string
-  commit: {
-    message: string
-    author: { date: string }
-  }
 }
 
 function relativeTime(iso: string) {
@@ -64,8 +69,6 @@ async function fetchWithTimeout(url: string, init: RequestInit, ms: number) {
   }
 }
 
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN || ''
-
 function ghHeaders() {
   const h: Record<string, string> = {
     'user-agent': 'stuti-portfolio',
@@ -75,60 +78,14 @@ function ghHeaders() {
   return h
 }
 
-// GitHub's public-events feed strips commit lists when a user's commit email
-// is marked private, which makes it useless here. Strategy:
-//   1. Use the events feed only to DISCOVER which repos the user has pushed
-//      to recently.
-//   2. Hit /repos/{owner}/{repo}/commits on each — that endpoint returns the
-//      real commits regardless of email privacy.
-//   3. Merge, sort by date, take the 3 newest.
-async function discoverRecentRepos(): Promise<string[]> {
-  try {
-    const res = await fetchWithTimeout(
-      `https://api.github.com/users/${USERNAME}/events/public?per_page=30`,
-      { headers: ghHeaders() },
-      5000
-    )
-    if (!res.ok) return []
-    const events = (await res.json()) as GithubEvent[]
-    const seen = new Set<string>()
-    const repos: string[] = []
-    for (const ev of events) {
-      if (ev.type !== 'PushEvent' && ev.type !== 'CreateEvent') continue
-      const name = ev.repo?.name
-      if (!name || seen.has(name)) continue
-      seen.add(name)
-      repos.push(name)
-      if (repos.length >= 5) break
-    }
-    return repos
-  } catch (err) {
-    console.warn('[github] events_failed', err)
-    return []
-  }
-}
-
-async function fetchRecentCommits(): Promise<CommitEntry[]> {
-  const repos = await discoverRecentRepos()
-  if (!repos.length) return []
-
-  // Fetch in parallel with per-request timeout so a single slow repo can't
-  // stall the whole response.
-  const results = await Promise.all(repos.map((r) => fetchRepoCommitsTagged(r)))
-  const flat = results.flat()
-  flat.sort((a, b) => (a.isoDate < b.isoDate ? 1 : -1))
-  return flat.slice(0, 3).map(({ isoDate: _iso, ...rest }) => rest)
-}
-
-// Same as fetchRepoCommits but also returns the ISO date for precise sort.
-async function fetchRepoCommitsTagged(
+async function fetchRepoCommits(
   fullName: string
 ): Promise<Array<CommitEntry & { isoDate: string }>> {
   try {
     const res = await fetchWithTimeout(
       `https://api.github.com/repos/${fullName}/commits?author=${USERNAME}&per_page=3`,
       { headers: ghHeaders() },
-      4000
+      3000
     )
     if (!res.ok) return []
     const commits = (await res.json()) as RepoCommit[]
@@ -140,27 +97,42 @@ async function fetchRepoCommitsTagged(
       url: `https://github.com/${fullName}/commit/${c.sha}`,
       isoDate: c.commit.author.date,
     }))
-  } catch (err) {
-    console.warn(`[github] repo_commits_failed ${fullName}`, err)
+  } catch {
     return []
   }
 }
 
-// Scrape the public contributions page. GitHub renders the calendar as a
-// table of <td data-date="YYYY-MM-DD" data-level="0..4">. We extract the
-// last 53 weeks (371 days) and bin by week column.
+async function fetchRecentCommits(): Promise<CommitEntry[]> {
+  try {
+    const res = await fetchWithTimeout(
+      `https://api.github.com/users/${USERNAME}/repos?sort=pushed&direction=desc&per_page=5`,
+      { headers: ghHeaders() },
+      3000
+    )
+    if (!res.ok) return []
+    const repos = (await res.json()) as RepoSummary[]
+    const top = repos.slice(0, 3).map((r) => r.full_name)
+    if (!top.length) return []
+    const results = await Promise.all(top.map(fetchRepoCommits))
+    const flat = results.flat()
+    flat.sort((a, b) => (a.isoDate < b.isoDate ? 1 : -1))
+    return flat.slice(0, 3).map(({ isoDate: _iso, ...rest }) => rest)
+  } catch {
+    return []
+  }
+}
+
 async function fetchContributions(): Promise<number[][] | null> {
   try {
     const res = await fetchWithTimeout(
       `https://github.com/users/${USERNAME}/contributions`,
       {
         headers: {
-          'user-agent':
-            'Mozilla/5.0 (compatible; stuti-portfolio/1.0)',
+          'user-agent': 'Mozilla/5.0 (compatible; stuti-portfolio/1.0)',
           accept: 'text/html',
         },
       },
-      6000
+      3500
     )
     if (!res.ok) return null
     const html = await res.text()
@@ -174,9 +146,7 @@ async function fetchContributions(): Promise<number[][] | null> {
     days.sort((a, b) => (a.date < b.date ? -1 : 1))
     const tail = days.slice(-53 * 7)
 
-    // Re-shape into [week][dayOfWeek] so the UI can render columns directly.
-    // We use the first day's weekday as the offset for the first column.
-    const firstDow = new Date(tail[0].date).getUTCDay() // 0=Sun
+    const firstDow = new Date(tail[0].date).getUTCDay()
     const grid: number[][] = []
     let col: number[] = new Array(firstDow).fill(-1)
     for (const d of tail) {
@@ -191,10 +161,27 @@ async function fetchContributions(): Promise<number[][] | null> {
       grid.push(col)
     }
     return grid
-  } catch (err) {
-    console.warn('[github] contributions_failed', err)
+  } catch {
     return null
   }
+}
+
+// Wraps a promise with a timeout; resolves with fallback if the promise
+// doesn't settle in time. Guarantees we return data before Vercel kills us.
+function withBudget<T>(promise: Promise<T>, ms: number, fallback: T): Promise<T> {
+  return new Promise((resolve) => {
+    const t = setTimeout(() => resolve(fallback), ms)
+    promise.then(
+      (v) => {
+        clearTimeout(t)
+        resolve(v)
+      },
+      () => {
+        clearTimeout(t)
+        resolve(fallback)
+      }
+    )
+  })
 }
 
 export default async function handler(req: Request): Promise<Response> {
@@ -215,20 +202,20 @@ export default async function handler(req: Request): Promise<Response> {
     })
   }
 
-  // Both fetches are individually try/catch'd so Promise.all can't reject;
-  // if GitHub is fully unreachable we still return a well-shaped payload
-  // with empty data and let the client decide what to render.
   const [commits, contributions] = await Promise.all([
-    fetchRecentCommits(),
-    fetchContributions(),
+    withBudget<CommitEntry[]>(fetchRecentCommits(), OVERALL_BUDGET_MS, []),
+    withBudget<number[][] | null>(fetchContributions(), OVERALL_BUDGET_MS, null),
   ])
+
   const payload = {
+    version: FN_VERSION,
     username: USERNAME,
     commits,
     contributions,
     fetchedAt: new Date().toISOString(),
   }
   cache = { at: Date.now(), payload }
+
   return new Response(JSON.stringify(payload), {
     status: 200,
     headers: {
