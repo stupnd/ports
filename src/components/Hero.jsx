@@ -131,7 +131,7 @@ export default function Hero() {
   return (
     <section
       ref={sectionRef}
-      className="relative flex min-h-[100dvh] flex-col overflow-x-hidden overflow-y-visible bg-bg md:min-h-full md:overflow-hidden"
+      className="relative flex min-h-[100dvh] flex-col overflow-x-hidden overflow-y-visible bg-bg max-md:pb-8 md:min-h-full md:overflow-hidden md:pb-0"
     >
       <div
         aria-hidden
@@ -163,12 +163,12 @@ export default function Hero() {
           variants={container}
           initial="hidden"
           animate="show"
-          className="relative mx-auto flex w-full max-w-6xl flex-col items-center px-5 max-md:pb-2 max-md:pt-10 md:block md:px-8 md:pb-8 md:pt-20"
+          className="relative mx-auto flex w-full max-w-6xl flex-col items-center px-5 max-md:pb-2 max-md:pt-8 md:block md:px-8 md:pb-8 md:pt-20"
         >
           {isMobile ? (
             <motion.div
               variants={fadeUp}
-              className="pointer-events-auto z-20 mb-5 flex w-full max-w-md flex-col items-center gap-3"
+              className="pointer-events-auto z-20 mb-4 flex w-full max-w-md flex-col items-center gap-2.5"
             >
               <p className="eyebrow text-center text-terracotta">Portfolio · 2026</p>
               <div className="flex items-center gap-2" aria-hidden>
@@ -225,7 +225,7 @@ export default function Hero() {
                 initial="hidden"
                 animate="show"
                 transition={{ duration: 0.55, ease: 'easeOut', delay: 0.35 }}
-                className="pointer-events-auto z-20 mt-7 w-full max-w-md"
+                className="pointer-events-auto z-20 mt-6 w-full max-w-md"
               >
                 <div className="rounded-2xl border border-ink/10 border-l-4 border-l-terracotta/55 bg-[#faf9f6] px-5 py-4 text-left shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] ring-1 ring-ink/[0.06]">
                   <p className="f-hand text-[1.15rem] leading-snug text-ink/85">
@@ -321,7 +321,7 @@ export default function Hero() {
         </motion.div>
       </div>
 
-      <div className="mt-auto flex flex-col gap-1 pb-6 md:pb-10">
+      <div className="flex flex-col gap-1 pb-5 max-md:mt-5 md:mt-auto md:pb-10">
         <MarqueeTicker
           tone="light"
           direction="left"

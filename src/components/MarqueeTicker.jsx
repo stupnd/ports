@@ -26,14 +26,9 @@ export default function MarqueeTicker({
   const isLight = tone === 'light'
   const isReverse = direction === 'right'
 
-  // Light tone uses a fully transparent surface so the orbs/blobs behind can
-  // show through. Instead of painting cream fade strips (which covered those
-  // backgrounds), light tone uses a CSS mask so the marquee itself fades to
-  // transparent at the edges. Dark tone keeps the traditional ink gradient
-  // since there's no background element to protect.
-  // Solid band on small viewports so masked edge pixels composite over page bg
-  // (avoids iOS “white seam” under the ticker); desktop stays transparent over orbs.
-  const surface = isLight ? 'max-md:bg-bg md:bg-transparent' : 'bg-ink'
+  // Light tone: no painted band — text + mask only so Hero blobs / page bg show
+  // through (including on mobile). Dark tone keeps the ink bar + edge fades.
+  const surface = isLight ? 'bg-transparent' : 'bg-ink'
   const textColor = isLight ? 'text-ink/70' : 'text-bg'
   const maskStyle = isLight
     ? {
