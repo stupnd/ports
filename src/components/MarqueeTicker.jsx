@@ -1,10 +1,17 @@
 const DEFAULT_ITEMS = [
   'Computer Engineering @ uOttawa',
   'IEEE WIE Chair',
-  'AI / ML',
-  'Full Stack',
-  'Embedded Systems',
-  'Co-op @ TrendAI',
+  'AI / ML engineer',
+  'Full-stack + Embedded',
+  'Incoming co-op @ TrendAI',
+  'Next.js · FastAPI · Anthropic',
+  'MediaPipe · Claude Vision',
+  'React Native · Arduino · STM32',
+  'Python · TypeScript · C/C++',
+  'Supabase · Postgres · Docker',
+  'Lil Bytes co-founder',
+  'Grace Hopper 2026',
+  'Available Jan 2027',
 ]
 
 export default function MarqueeTicker({
@@ -12,18 +19,20 @@ export default function MarqueeTicker({
   tone = 'dark',
   className = '',
 }) {
+  // Duplicate items so the CSS `translateX(-50%)` loop is seamless.
   const content = [...items, ...items]
   const isLight = tone === 'light'
 
-  const surface = isLight
-    ? 'bg-card ring-1 ring-ink/5'
-    : 'bg-ink'
-  const textColor = isLight ? 'text-ink/80' : 'text-bg'
-  const fadeFrom = isLight ? 'from-card' : 'from-ink'
+  // Light tone uses a fully transparent surface so the orbs behind can
+  // show through. Edge fades use the hero's bg so text disappears against
+  // the same color as the section.
+  const surface = isLight ? 'bg-transparent' : 'bg-ink'
+  const textColor = isLight ? 'text-ink/70' : 'text-bg'
+  const fadeFrom = isLight ? 'from-bg' : 'from-ink'
 
   return (
     <div
-      className={`relative w-full overflow-hidden py-4 ${surface} ${className}`}
+      className={`relative w-full overflow-hidden py-3 ${surface} ${className}`}
       aria-label="About at a glance"
     >
       <div className="marquee-track flex w-max whitespace-nowrap">
