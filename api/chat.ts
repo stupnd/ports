@@ -71,85 +71,94 @@ function buildModel() {
   return null
 }
 
+function errorResponse(status: number, code: string, detail?: string) {
+  return new Response(JSON.stringify({ error: code, detail }), {
+    status,
+    headers: { 'content-type': 'application/json' },
+  })
+}
+
 export default async function handler(req: Request): Promise<Response> {
-  if (req.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'method_not_allowed' }), {
-      status: 405,
-      headers: { 'content-type': 'application/json' },
-    })
-  }
+  try {
+    if (req.method !== 'POST') return errorResponse(405, 'method_not_allowed')
 
-  // Kill-switch — set ALLOW_CHAT=false on Vercel to disable without a redeploy.
-  if (process.env.ALLOW_CHAT === 'false') {
-    return new Response(JSON.stringify({ error: 'chat_disabled' }), {
-      status: 503,
-      headers: { 'content-type': 'application/json' },
-    })
-  }
+    // Kill-switch — set ALLOW_CHAT=false on Vercel to disable without a redeploy.
+    if (process.env.ALLOW_CHAT === 'false') return errorResponse(503, 'chat_disabled')
 
-  const ip = getIp(req)
-  const rl = rateLimit(ip)
-  if (!rl.ok) {
-    return new Response(JSON.stringify({ error: 'rate_limited', retryAfter: rl.retryAfter }), {
-      status: 429,
+    const ip = getIp(req)
+    const rl = rateLimit(ip)
+    if (!rl.ok) {
+      return new Response(
+        JSON.stringify({ error: 'rate_limited', retryAfter: rl.retryAfter }),
+        {
+          status: 429,
+          headers: {
+            'content-type': 'application/json',
+            'retry-after': String(rl.retryAfter || 60),
+          },
+        }
+      )
+    }
+
+    let body: { messages?: Array<{ role: string; content: string }> } = {}
+    try {
+      body = await req.json()
+    } catch {
+      return errorResponse(400, 'invalid_json')
+    }
+
+    const messages = Array.isArray(body.messages) ? body.messages.slice(-12) : []
+    if (!messages.length) return errorResponse(400, 'no_messages')
+
+    // Sanity caps: shrink oversized messages so a malicious caller can't blow
+    // up the token bill via a single huge prompt.
+    const cleanMessages = messages
+      .filter(
+        (m) =>
+          m && typeof m.content === 'string' && (m.role === 'user' || m.role === 'assistant')
+      )
+      .map((m) => ({
+        role: m.role as 'user' | 'assistant',
+        content: m.content.slice(0, 2000),
+      }))
+
+    if (!cleanMessages.length) return errorResponse(400, 'no_valid_messages')
+
+    const model = buildModel()
+    if (!model) return errorResponse(503, 'no_provider_configured')
+
+    let system: string
+    try {
+      system = `${SYSTEM_PROMPT_PREFIX}\n${buildKnowledgeDump()}\n---`
+    } catch (err) {
+      console.error('[chat] knowledge_dump_failed', err)
+      return errorResponse(500, 'knowledge_dump_failed', (err as Error)?.message)
+    }
+
+    let result
+    try {
+      result = streamText({
+        model,
+        system,
+        messages: cleanMessages,
+        maxOutputTokens: 320,
+        temperature: 0.4,
+      })
+    } catch (err) {
+      console.error('[chat] stream_init_failed', err)
+      return errorResponse(500, 'stream_init_failed', (err as Error)?.message)
+    }
+
+    // Plain text-stream response — simpler than the AI SDK data-stream protocol
+    // and trivial to consume from the browser via ReadableStream.
+    return result.toTextStreamResponse({
       headers: {
-        'content-type': 'application/json',
-        'retry-after': String(rl.retryAfter || 60),
+        'cache-control': 'no-store',
+        'x-content-type-options': 'nosniff',
       },
     })
+  } catch (err) {
+    console.error('[chat] unhandled', err)
+    return errorResponse(500, 'unhandled', (err as Error)?.message)
   }
-
-  let body: { messages?: Array<{ role: string; content: string }> } = {}
-  try {
-    body = await req.json()
-  } catch {
-    return new Response(JSON.stringify({ error: 'invalid_json' }), {
-      status: 400,
-      headers: { 'content-type': 'application/json' },
-    })
-  }
-
-  const messages = Array.isArray(body.messages) ? body.messages.slice(-12) : []
-  if (!messages.length) {
-    return new Response(JSON.stringify({ error: 'no_messages' }), {
-      status: 400,
-      headers: { 'content-type': 'application/json' },
-    })
-  }
-
-  // Sanity caps: shrink oversized messages so a malicious caller can't blow
-  // up the token bill via a single huge prompt.
-  const cleanMessages = messages
-    .filter((m) => m && typeof m.content === 'string' && (m.role === 'user' || m.role === 'assistant'))
-    .map((m) => ({
-      role: m.role as 'user' | 'assistant',
-      content: m.content.slice(0, 2000),
-    }))
-
-  const model = buildModel()
-  if (!model) {
-    return new Response(JSON.stringify({ error: 'no_provider_configured' }), {
-      status: 503,
-      headers: { 'content-type': 'application/json' },
-    })
-  }
-
-  const system = `${SYSTEM_PROMPT_PREFIX}\n${buildKnowledgeDump()}\n---`
-
-  const result = streamText({
-    model,
-    system,
-    messages: cleanMessages,
-    maxOutputTokens: 320,
-    temperature: 0.4,
-  })
-
-  // Plain text-stream response — simpler than the AI SDK data-stream protocol
-  // and trivial to consume from the browser via ReadableStream.
-  return result.toTextStreamResponse({
-    headers: {
-      'cache-control': 'no-store',
-      'x-content-type-options': 'nosniff',
-    },
-  })
 }
