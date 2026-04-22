@@ -9,7 +9,14 @@ import { prefersReducedMotion } from '../hooks/useReducedMotion'
 const links = [
   { label: 'LinkedIn', href: 'https://www.linkedin.com/in/stutipandya' },
   { label: 'GitHub', href: 'https://github.com/stupnd' },
-  { label: 'Resume (PDF)', href: '/resume.pdf' },
+  // `external: true` forces target="_blank" even for same-origin asset links
+  // (the PDF lives in /public). `download` hints a filename for save-as.
+  {
+    label: 'Resume (PDF)',
+    href: '/Stuti_Pandya_Resume.pdf',
+    external: true,
+    download: 'Stuti_Pandya_Resume.pdf',
+  },
   { label: 'Lil Bytes', href: 'https://www.instagram.com/lilbytes.tech/' },
 ]
 
@@ -139,18 +146,22 @@ export default function Contact() {
           variants={fadeUp(0.2)}
           className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 md:mt-12"
         >
-          {links.map((l) => (
-            <li key={l.href}>
-              <a
-                href={l.href}
-                target={l.href.startsWith('http') ? '_blank' : undefined}
-                rel={l.href.startsWith('http') ? 'noreferrer' : undefined}
-                className="text-sm font-semibold text-bg underline decoration-bg/40 decoration-2 underline-offset-[6px] transition-colors hover:text-sun hover:decoration-sun"
-              >
-                {l.label}
-              </a>
-            </li>
-          ))}
+          {links.map((l) => {
+            const isExternal = l.external || l.href.startsWith('http')
+            return (
+              <li key={l.href}>
+                <a
+                  href={l.href}
+                  target={isExternal ? '_blank' : undefined}
+                  rel={isExternal ? 'noreferrer' : undefined}
+                  download={l.download}
+                  className="text-sm font-semibold text-bg underline decoration-bg/40 decoration-2 underline-offset-[6px] transition-colors hover:text-sun hover:decoration-sun"
+                >
+                  {l.label}
+                </a>
+              </li>
+            )
+          })}
         </motion.ul>
 
         <p className="mt-16 text-xs text-bg/60 md:mt-20">
