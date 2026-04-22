@@ -127,7 +127,10 @@ function pickFallback(prompt) {
   return "The live chat isn't wired up in this environment — but Stuti is graduating Dec 2026 and open to New Grad SWE / AI roles for Jan 2027. Email her at stuti.pandya0@gmail.com or browse the other tabs. [[cite:projects]] [[cite:about]]"
 }
 
-const AI_DISABLED_CODES = new Set([404, 405, 503])
+// Any non-2xx response other than 429 is treated as "API not available here"
+// and we fall through to canned fallback answers so local dev (plain `vite`)
+// Just Works without needing `vercel dev`.
+const RATE_LIMIT_STATUS = 429
 
 export default function AskMeChat() {
   const [messages, setMessages] = useState([])
@@ -174,15 +177,19 @@ export default function AskMeChat() {
         signal: controller.signal,
       })
 
-      if (!res.ok) {
-        if (AI_DISABLED_CODES.has(res.status)) {
-          setApiMissing(true)
-          setMessages((m) => [...m, { role: 'assistant', content: pickFallback(text) }])
-        } else if (res.status === 429) {
-          setError('Slow down a touch — too many messages in the last minute.')
-        } else {
-          setError('The chat hit a snag. Try again in a moment.')
-        }
+      if (res.status === RATE_LIMIT_STATUS) {
+        setError('Slow down a touch — too many messages in the last minute.')
+        return
+      }
+
+      // Detect Vite's SPA fallback: dev server returns index.html with 200 for
+      // unknown POST routes, so check content-type too.
+      const ct = res.headers.get('content-type') || ''
+      const looksLikeHtml = ct.includes('text/html')
+
+      if (!res.ok || looksLikeHtml) {
+        setApiMissing(true)
+        setMessages((m) => [...m, { role: 'assistant', content: pickFallback(text) }])
         return
       }
 
@@ -196,15 +203,28 @@ export default function AskMeChat() {
       setMessages((m) => [...m, { role: 'assistant', content: '' }])
 
       const decoder = new TextDecoder()
+      let streamed = ''
       while (true) {
         const { value, done } = await reader.read()
         if (done) break
         const chunk = decoder.decode(value, { stream: true })
         if (!chunk) continue
+        streamed += chunk
         setMessages((m) => {
           const last = m[m.length - 1]
           if (!last || last.role !== 'assistant') return m
           const updated = { ...last, content: last.content + chunk }
+          return [...m.slice(0, -1), updated]
+        })
+      }
+
+      // If the API streamed nothing (e.g. misconfigured), fall back cleanly.
+      if (!streamed.trim()) {
+        setApiMissing(true)
+        setMessages((m) => {
+          const last = m[m.length - 1]
+          if (!last || last.role !== 'assistant') return m
+          const updated = { ...last, content: pickFallback(text) }
           return [...m.slice(0, -1), updated]
         })
       }
@@ -327,8 +347,9 @@ export default function AskMeChat() {
         <p className="mt-3 text-sm text-terracotta">{error}</p>
       ) : null}
       {apiMissing && messages.length > 0 ? (
-        <p className="mt-3 text-[12px] italic text-muted">
-          (Running in offline demo mode — answers are canned. Deploy to Vercel with an LLM key to enable live chat.)
+        <p className="mt-3 flex items-center gap-2 text-[11px] text-muted">
+          <span className="inline-block h-1.5 w-1.5 rounded-full bg-muted/50" aria-hidden />
+          Demo mode — answers are curated. Live streaming chat activates on the deployed build.
         </p>
       ) : null}
 

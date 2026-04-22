@@ -179,8 +179,9 @@ export default function NowBuilding() {
         ))}
       </ul>
       {status === 'fallback' ? (
-        <p className="mt-4 text-[11px] italic text-muted">
-          (Showing sample activity — live feed activates once deployed.)
+        <p className="mt-4 flex items-center gap-2 text-[11px] text-muted">
+          <span className="inline-block h-1.5 w-1.5 rounded-full bg-muted/50" aria-hidden />
+          Sample activity — live GitHub feed activates on the deployed build.
         </p>
       ) : null}
     </section>
