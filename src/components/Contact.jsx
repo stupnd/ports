@@ -331,7 +331,7 @@ export default function Contact() {
                   <path d="M3 7l9 6 9-6" />
                 </svg>
               </span>
-              <div className="min-w-0">
+              <div>
                 <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-bg/60">
                   email
                 </p>
@@ -339,7 +339,7 @@ export default function Contact() {
                   <a
                     href={`mailto:${EMAIL}`}
                     data-cursor="write"
-                    className="group f-display block truncate text-xl font-bold tracking-tight text-bg transition-colors hover:text-sun md:text-3xl"
+                    className="group f-display inline-block break-all text-lg font-bold tracking-tight text-bg transition-colors hover:text-sun md:text-2xl"
                   >
                     {EMAIL}
                   </a>
