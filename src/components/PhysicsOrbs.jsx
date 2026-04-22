@@ -67,6 +67,54 @@ const ORBS = [
   },
 ]
 
+// Circle-vs-AABB collision. `rect` is container-local {left,top,right,bottom}.
+// Handles the rare "circle center landed inside rect" case by ejecting out the
+// nearest edge so orbs never get permanently trapped inside the name bubble.
+function resolveObstacle(o, rect, restitution) {
+  if (!rect) return
+  const closestX = Math.max(rect.left, Math.min(o.x, rect.right))
+  const closestY = Math.max(rect.top, Math.min(o.y, rect.bottom))
+  const dx = o.x - closestX
+  const dy = o.y - closestY
+  const distSq = dx * dx + dy * dy
+  if (distSq >= o.r * o.r) return
+  if (distSq === 0) {
+    // Center inside — push out the nearest side
+    const leftD = o.x - rect.left
+    const rightD = rect.right - o.x
+    const topD = o.y - rect.top
+    const bottomD = rect.bottom - o.y
+    const minD = Math.min(leftD, rightD, topD, bottomD)
+    if (minD === leftD) {
+      o.x = rect.left - o.r
+      o.vx = -Math.abs(o.vx) * restitution
+    } else if (minD === rightD) {
+      o.x = rect.right + o.r
+      o.vx = Math.abs(o.vx) * restitution
+    } else if (minD === topD) {
+      o.y = rect.top - o.r
+      o.vy = -Math.abs(o.vy) * restitution
+    } else {
+      o.y = rect.bottom + o.r
+      o.vy = Math.abs(o.vy) * restitution
+    }
+    return
+  }
+  const dist = Math.sqrt(distSq)
+  const nx = dx / dist
+  const ny = dy / dist
+  const overlap = o.r - dist
+  if (!o.dragging) {
+    o.x += nx * overlap
+    o.y += ny * overlap
+    const vn = o.vx * nx + o.vy * ny
+    if (vn < 0) {
+      o.vx -= (1 + restitution) * vn * nx
+      o.vy -= (1 + restitution) * vn * ny
+    }
+  }
+}
+
 function resolveCollision(a, b) {
   const dx = b.x - a.x
   const dy = b.y - a.y
@@ -106,7 +154,7 @@ function resolveCollision(a, b) {
   }
 }
 
-export default function PhysicsOrbs({ containerRef, onFirstDrag }) {
+export default function PhysicsOrbs({ containerRef, obstacleRef, onFirstDrag }) {
   // Lazy-initialize orb states on first render so ref callbacks (which fire
   // during commit, BEFORE useEffect) can attach DOM elements directly. Without
   // this, in production (no StrictMode double-mount) orbs never get wired up
@@ -187,6 +235,22 @@ export default function PhysicsOrbs({ containerRef, onFirstDrag }) {
       const { width: w, height: h } = rectRef.current
       const orbs = orbStates.current
 
+      // Measure the name-bubble obstacle once per frame, in container-local
+      // coords. Reading getBoundingClientRect twice is cheap for a single
+      // element and keeps collisions accurate even as the card reflows.
+      let obstacleRect = null
+      const obstacleEl = obstacleRef?.current
+      if (obstacleEl && container) {
+        const cr = container.getBoundingClientRect()
+        const orr = obstacleEl.getBoundingClientRect()
+        obstacleRect = {
+          left: orr.left - cr.left,
+          top: orr.top - cr.top,
+          right: orr.right - cr.left,
+          bottom: orr.bottom - cr.top,
+        }
+      }
+
       // Integrate + wall collisions
       for (const o of orbs) {
         if (o.dragging) continue
@@ -209,6 +273,13 @@ export default function PhysicsOrbs({ containerRef, onFirstDrag }) {
         } else if (o.y > h - o.r) {
           o.y = h - o.r
           o.vy = -Math.abs(o.vy) * WALL_RESTITUTION
+        }
+      }
+
+      // Bounce orbs off the name bubble
+      if (obstacleRect) {
+        for (const o of orbs) {
+          resolveObstacle(o, obstacleRect, WALL_RESTITUTION)
         }
       }
 
@@ -239,7 +310,7 @@ export default function PhysicsOrbs({ containerRef, onFirstDrag }) {
       cancelAnimationFrame(rafId)
       ro.disconnect()
     }
-  }, [containerRef])
+  }, [containerRef, obstacleRef])
 
   // Global pointer handlers for drag follow + release
   useEffect(() => {

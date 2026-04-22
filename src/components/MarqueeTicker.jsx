@@ -17,11 +17,14 @@ const DEFAULT_ITEMS = [
 export default function MarqueeTicker({
   items = DEFAULT_ITEMS,
   tone = 'dark',
+  direction = 'left',
+  speed = 25,
   className = '',
 }) {
   // Duplicate items so the CSS `translateX(-50%)` loop is seamless.
   const content = [...items, ...items]
   const isLight = tone === 'light'
+  const isReverse = direction === 'right'
 
   // Light tone uses a fully transparent surface so the orbs behind can
   // show through. Edge fades use the hero's bg so text disappears against
@@ -35,7 +38,12 @@ export default function MarqueeTicker({
       className={`relative w-full overflow-hidden py-3 ${surface} ${className}`}
       aria-label="About at a glance"
     >
-      <div className="marquee-track flex w-max whitespace-nowrap">
+      <div
+        className={`marquee-track flex w-max whitespace-nowrap${
+          isReverse ? ' is-reverse' : ''
+        }`}
+        style={{ animationDuration: `${speed}s` }}
+      >
         {content.map((item, i) => (
           <div key={`${item}-${i}`} className="flex items-center">
             <span className={`eyebrow px-7 ${textColor}`}>{item}</span>

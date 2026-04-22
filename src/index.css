@@ -110,6 +110,12 @@
   will-change: transform;
 }
 
+/* Reverse lane pairs with a second MarqueeTicker going the opposite way — the
+   ticker component flips this class on when `direction="right"`. */
+.marquee-track.is-reverse {
+  animation-direction: reverse;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .marquee-track {
     animation: none;
