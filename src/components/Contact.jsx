@@ -209,29 +209,30 @@ export default function Contact() {
   }, [])
 
   return (
-    <section className="relative flex min-h-full items-center overflow-hidden bg-terracotta text-bg">
-      {/* Ambient cream glow — softens the flat terracotta and gives the cards
-          something warm to sit on top of. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -left-[15%] -top-[20%] h-[520px] w-[520px] rounded-full"
-        style={{
-          background:
-            'radial-gradient(circle at center, rgba(250,250,248,0.16), transparent 65%)',
-          filter: 'blur(20px)',
-        }}
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -right-[12%] bottom-[-18%] h-[480px] w-[480px] rounded-full"
-        style={{
-          background:
-            'radial-gradient(circle at center, rgba(240,201,58,0.22), transparent 65%)',
-          filter: 'blur(26px)',
-        }}
-      />
+    <section className="relative flex min-h-full items-center overflow-hidden bg-bg text-ink py-10 md:py-14">
+      <div className="relative mx-auto w-full max-w-5xl px-5 md:px-8">
+        <div className="relative overflow-hidden rounded-[1.75rem] bg-terracotta px-5 py-14 text-bg shadow-[0_28px_90px_-24px_rgba(232,82,26,0.42)] ring-1 ring-terracotta/30 md:rounded-[2.25rem] md:px-8 md:py-16">
+          {/* Ambient glows — sit inside the terracotta card */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -left-[15%] -top-[20%] h-[520px] w-[520px] rounded-full"
+            style={{
+              background:
+                'radial-gradient(circle at center, rgba(250,250,248,0.16), transparent 65%)',
+              filter: 'blur(20px)',
+            }}
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -right-[12%] bottom-[-18%] h-[480px] w-[480px] rounded-full"
+            style={{
+              background:
+                'radial-gradient(circle at center, rgba(240,201,58,0.22), transparent 65%)',
+              filter: 'blur(26px)',
+            }}
+          />
 
-      <div className="relative mx-auto w-full max-w-5xl px-5 py-16 md:px-8 md:py-24">
+          <div className="relative">
         {/* Eyebrow */}
         <motion.p
           initial="hidden"
@@ -405,6 +406,8 @@ export default function Contact() {
             Designed &amp; built by Stuti Pandya · 2026
           </p>
         </motion.div>
+          </div>
+        </div>
       </div>
     </section>
   )

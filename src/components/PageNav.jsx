@@ -1,56 +1,47 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useLayoutEffect, useMemo, useRef } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 
-const SCROLLER_ID = 'tab-panel'
-/** px from bottom — counts as “reached the end” for showing the pill */
-const END_THRESHOLD = 80
-
-function isScrolledToBottom(el) {
-  if (!el) return false
-  const { scrollTop, scrollHeight, clientHeight } = el
-  const overflow = scrollHeight - clientHeight
-  if (overflow <= 2) return true
-  return scrollTop >= overflow - END_THRESHOLD
+/** 1 = forward in tab order (next / wrap last→home); -1 = backward (prev / wrap home→last). */
+function navDirection(prevIdx, nextIdx, len) {
+  if (prevIdx === nextIdx) return 1
+  if (prevIdx === len - 1 && nextIdx === 0) return 1
+  if (prevIdx === 0 && nextIdx === len - 1) return -1
+  return nextIdx > prevIdx ? 1 : -1
 }
 
-// Floating next/prev pill that lives at the App level so every tab inherits
-// it automatically. Talks back to App via the same `portfolio:navigate` event
-// bus used by the command palette. Hidden until the tab scroller is at the
-// bottom (or the page has no overflow).
+/** Left rail: forward → new label sweeps in from the page center, exits toward the left edge. */
+const leftPillVariants = {
+  enter: (d) => ({ x: d === 1 ? 24 : -24, opacity: 0 }),
+  center: { x: 0, opacity: 1 },
+  exit: (d) => ({ x: d === 1 ? -24 : 24, opacity: 0 }),
+}
+
+/** Right rail: forward → new label from center, exits toward the right edge. */
+const rightPillVariants = {
+  enter: (d) => ({ x: d === 1 ? -24 : 24, opacity: 0 }),
+  center: { x: 0, opacity: 1 },
+  exit: (d) => ({ x: d === 1 ? 24 : -24, opacity: 0 }),
+}
+
+const pillTransition = { duration: 0.36, ease: [0.22, 1, 0.36, 1] }
+
+const pillShell =
+  'rounded-2xl shadow-[0_12px_40px_-12px_rgba(17,17,17,0.45)] ring-1 ring-bg/20 backdrop-blur-md'
+
+// Prev fixed on the left edge, next on the right — both animate on tab change.
 export default function PageNav({ tabs, activeTab, onChange }) {
-  const [atBottom, setAtBottom] = useState(false)
-
-  const update = useCallback(() => {
-    const el = document.getElementById(SCROLLER_ID)
-    setAtBottom(isScrolledToBottom(el))
-  }, [])
-
-  useEffect(() => {
-    const el = document.getElementById(SCROLLER_ID)
-    if (!el) return undefined
-
-    setAtBottom(isScrolledToBottom(el))
-
-    el.addEventListener('scroll', update, { passive: true })
-    window.addEventListener('resize', update)
-
-    const ro = new ResizeObserver(update)
-    ro.observe(el)
-    const first = el.firstElementChild
-    if (first) ro.observe(first)
-
-    const t = window.setTimeout(update, 120)
-
-    return () => {
-      window.clearTimeout(t)
-      el.removeEventListener('scroll', update)
-      window.removeEventListener('resize', update)
-      ro.disconnect()
-    }
-  }, [activeTab, update])
-
   const idx = tabs.findIndex((t) => t.id === activeTab)
   if (idx < 0) return null
+
+  const prevIdxRef = useRef(idx)
+  const direction = useMemo(
+    () => navDirection(prevIdxRef.current, idx, tabs.length),
+    [idx, tabs.length]
+  )
+
+  useLayoutEffect(() => {
+    prevIdxRef.current = idx
+  }, [idx])
 
   const prev = idx > 0 ? tabs[idx - 1] : null
   const isLast = idx === tabs.length - 1
@@ -61,80 +52,84 @@ export default function PageNav({ tabs, activeTab, onChange }) {
   const goNext = () => onChange(next.id)
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-20 z-30 flex justify-center px-5 md:bottom-6">
-      <AnimatePresence mode="wait">
-        {atBottom ? (
+    <>
+      <div className="pointer-events-none fixed left-0 top-1/2 z-30 -translate-y-1/2 pl-[max(0.75rem,env(safe-area-inset-left))] pr-2 md:pl-[max(1rem,env(safe-area-inset-left))]">
+        <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 16, opacity: 0 }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            className="pointer-events-auto flex items-center gap-1 rounded-full bg-ink/90 p-1 text-bg shadow-[0_14px_40px_-12px_rgba(17,17,17,0.5)] ring-1 ring-bg/10 backdrop-blur-md"
+            custom={direction}
+            variants={leftPillVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={pillTransition}
+            className="pointer-events-auto"
           >
-          <button
-            type="button"
-            onClick={goPrev}
-            disabled={!prev}
-            aria-label={prev ? `Previous page: ${prev.label}` : 'No previous page'}
-            className="group inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-bg/70 transition-all hover:bg-bg/10 hover:text-bg disabled:cursor-not-allowed disabled:opacity-25 disabled:hover:bg-transparent"
-          >
-            <svg
-              className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden
+            <button
+              type="button"
+              onClick={goPrev}
+              disabled={!prev}
+              aria-label={prev ? `Previous: ${prev.label}` : 'No previous page'}
+              className={`group flex max-w-[min(calc(100vw-4.5rem),10rem)] items-center gap-1.5 rounded-2xl px-2.5 py-2.5 text-[10px] font-semibold uppercase tracking-[0.12em] transition-colors md:max-w-[11rem] md:px-3 ${pillShell} ${
+                prev
+                  ? 'bg-ink/92 text-bg/85 hover:bg-bg/10 hover:text-bg'
+                  : 'cursor-not-allowed bg-ink/50 text-bg/35'
+              }`}
             >
-              <path d="M19 12H5" />
-              <path d="M12 19l-7-7 7-7" />
-            </svg>
-            <span className="hidden max-w-[140px] truncate sm:inline">
-              {prev ? prev.label : 'Start'}
-            </span>
-          </button>
+              <svg
+                className="h-4 w-4 shrink-0 transition-transform group-hover:-translate-x-0.5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden
+              >
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
+              <span className="min-w-0 truncate">{prev ? prev.label : '—'}</span>
+            </button>
+          </motion.div>
+        </AnimatePresence>
+      </div>
 
-          <div className="h-5 w-px bg-bg/20" aria-hidden />
-
-          <button
-            type="button"
-            onClick={goNext}
-            aria-label={isLast ? 'Back to home' : `Next page: ${next.label}`}
-            className="group relative inline-flex items-center gap-1.5 overflow-hidden rounded-full px-3.5 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-ink transition-all hover:-translate-y-0.5"
-            style={{ backgroundColor: nextAccent }}
+      <div className="pointer-events-none fixed right-0 top-1/2 z-30 -translate-y-1/2 pr-[max(0.75rem,env(safe-area-inset-right))] pl-2 md:pr-[max(1rem,env(safe-area-inset-right))]">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            custom={direction}
+            variants={rightPillVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={pillTransition}
+            className="pointer-events-auto"
           >
-            <span className="relative">
-              {isLast ? 'Back to top' : <>Next · {next.label}</>}
-            </span>
-            <svg
-              className="relative h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden
+            <button
+              type="button"
+              onClick={goNext}
+              aria-label={isLast ? 'Back to home' : `Next: ${next.label}`}
+              className={`group flex max-w-[min(calc(100vw-4.5rem),10rem)] items-center gap-1.5 rounded-2xl px-2.5 py-2.5 text-[10px] font-bold uppercase tracking-[0.14em] text-white antialiased transition-transform [text-shadow:0_1px_2px_rgba(0,0,0,0.35)] hover:scale-[1.02] md:max-w-[11rem] md:px-3 ${pillShell}`}
+              style={{ backgroundColor: nextAccent }}
             >
-              {isLast ? (
-                <>
-                  <path d="M12 19V5" />
-                  <path d="M5 12l7-7 7 7" />
-                </>
-              ) : (
-                <>
-                  <path d="M5 12h14" />
-                  <path d="M12 5l7 7-7 7" />
-                </>
-              )}
-            </svg>
-          </button>
-        </motion.div>
-        ) : null}
-      </AnimatePresence>
-    </div>
+              <span className="min-w-0 truncate">{isLast ? 'Home' : next.label}</span>
+              <svg
+                className="h-4 w-4 shrink-0 text-white transition-transform group-hover:translate-x-0.5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden
+              >
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+            </button>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    </>
   )
 }

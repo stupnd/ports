@@ -86,12 +86,14 @@ export default function About() {
           decoding="async"
         />
       </div>
-      <div className="relative mt-3 flex flex-col items-center md:mt-4 md:items-start">
-        <HandArrow
-          stroke="currentColor"
-          aria-hidden
-          className="pointer-events-none -mb-1.5 h-[3.75rem] w-[5.25rem] rotate-[208deg] text-terracotta md:ml-8 md:h-16 md:w-28 md:rotate-[196deg]"
-        />
+      <div className="mt-5 flex flex-col items-center gap-2 md:mt-6 md:items-start">
+        <div className="flex w-full justify-center md:justify-start md:pl-3">
+          <HandArrow
+            stroke="currentColor"
+            aria-hidden
+            className="pointer-events-none h-10 w-[7.25rem] -scale-x-100 -rotate-[86deg] text-terracotta md:h-11 md:w-32 md:-rotate-[80deg]"
+          />
+        </div>
         <div className="relative inline-block max-w-[18rem] -rotate-1 md:max-w-none">
           <span
             aria-hidden

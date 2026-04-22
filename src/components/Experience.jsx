@@ -170,7 +170,7 @@ export default function Experience() {
   }, [])
 
   return (
-    <section className="min-h-full bg-sand">
+    <section className="min-h-full bg-bg">
       <div className="mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-20">
         {/* Header */}
         <motion.p
