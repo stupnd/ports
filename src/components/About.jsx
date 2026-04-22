@@ -87,7 +87,25 @@ export default function About() {
           decoding="async"
         />
       </div>
-      <p className="mt-2 text-center text-sm text-muted md:text-left">that&apos;s me :)</p>
+      <div className="relative mt-3 flex flex-col items-center md:mt-4 md:items-start">
+        <HandArrow
+          stroke="currentColor"
+          aria-hidden
+          className="pointer-events-none -mb-1.5 h-[3.75rem] w-[5.25rem] rotate-[208deg] text-terracotta md:ml-8 md:h-16 md:w-28 md:rotate-[196deg]"
+        />
+        <div className="relative inline-block max-w-[18rem] -rotate-1 md:max-w-none">
+          <span
+            aria-hidden
+            className="absolute left-1/2 top-0 z-[1] h-2 w-16 -translate-x-1/2 -translate-y-1/2 rounded-[2px] bg-terracotta/30 shadow-[0_1px_0_rgba(17,17,17,0.08)]"
+          />
+          <div className="relative z-[2] rounded-[2px] border border-ink/15 bg-[#fffdf6] px-4 py-2.5 shadow-[3px_4px_0_rgba(17,17,17,0.07),inset_0_1px_0_rgba(255,255,255,0.75)]">
+            <p className="f-hand text-center text-[clamp(1.5rem,4.8vw,1.85rem)] leading-tight text-ink md:text-left">
+              that&apos;s me
+              <span className="text-terracotta"> :)</span>
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   )
 
