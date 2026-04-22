@@ -1,5 +1,8 @@
+import { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import Squiggle from './Squiggle'
+import { gsap, ScrollTrigger } from '../lib/scroll'
+import { prefersReducedMotion } from '../hooks/useReducedMotion'
 
 const roles = [
   {
@@ -45,6 +48,39 @@ const row = (i = 0) => ({
 })
 
 export default function Experience() {
+  const railRef = useRef(null)
+  const listRef = useRef(null)
+
+  useEffect(() => {
+    if (prefersReducedMotion()) return undefined
+    const rail = railRef.current
+    const list = listRef.current
+    if (!rail || !list) return undefined
+
+    const scrollerEl = document.querySelector('#tab-panel')
+
+    const tween = gsap.fromTo(
+      rail,
+      { scaleY: 0 },
+      {
+        scaleY: 1,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: list,
+          scroller: scrollerEl || undefined,
+          start: 'top 80%',
+          end: 'bottom 80%',
+          scrub: 0.6,
+        },
+      }
+    )
+
+    return () => {
+      tween.scrollTrigger?.kill()
+      tween.kill()
+    }
+  }, [])
+
   return (
     <section className="min-h-full bg-sand">
       <div className="mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-20">
@@ -72,7 +108,12 @@ export default function Experience() {
           </span>
         </motion.h2>
 
-        <ul className="mt-14 md:mt-16">
+        <ul ref={listRef} className="relative mt-14 md:mt-16">
+          <span
+            ref={railRef}
+            aria-hidden
+            className="pointer-events-none absolute left-0 top-0 hidden h-full w-[2px] origin-top bg-ink/25 md:block"
+          />
           {roles.map((r, i) => (
             <motion.li
               key={`${r.company}-${r.dates}`}

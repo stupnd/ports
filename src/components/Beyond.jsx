@@ -1,5 +1,7 @@
 import { motion } from 'framer-motion'
 import Squiggle from './Squiggle'
+import Polaroid from './Polaroid'
+import { WavyUnderline, HandStar } from './Doodles'
 
 const viewOnce = { once: true, amount: 0.15 }
 
@@ -26,16 +28,17 @@ const interests = [
     tone: 'cobalt',
   },
   {
-    icon: '🍰',
-    name: 'Healthy Baking',
-    line: "Tofu chocolate cake. Don't knock it.",
-    tone: 'sun',
+    icon: '🍜',
+    name: 'Trying New Food',
+    line: 'Always down to find the best spot in any city.',
+    tone: 'terracotta',
   },
   {
     icon: '📷',
     name: 'Digicam Photography',
     line: 'Grain > pixels. Always.',
     tone: 'forest',
+    star: true,
   },
 ]
 
@@ -47,10 +50,12 @@ const PILL_TONES = {
 }
 
 const polaroids = [
-  { caption: 'ottawa 2025', rotate: -3, yStart: 40 },
-  { caption: 'kitchen experiments', rotate: 1, yStart: 60 },
-  { caption: 'friends :)', rotate: -1, yStart: 30 },
-  { caption: 'somewhere', rotate: 2, yStart: 50 },
+  { src: '/photos/beyond/kayaks.JPG', caption: 'somewhere', rotation: 1 },
+  { src: '/photos/beyond/pizza.JPG', caption: 'food > everything', rotation: -1.5 },
+  { src: '/photos/beyond/flamingos.JPG', caption: 'ottawa zoo', rotation: 1.5 },
+  { src: '/photos/beyond/friends.JPG', caption: 'us :)', rotation: -1 },
+  { src: '/photos/beyond/digicam.JPG', caption: 'digicam dump', rotation: 0.5 },
+  { src: '/photos/beyond/lil-bytes.JPG', caption: 'lil bytes', rotation: -2 },
 ]
 
 function InterestCard({ item, index }) {
@@ -68,6 +73,13 @@ function InterestCard({ item, index }) {
         {item.tone === 'sun' ? '★' : item.tone === 'cobalt' ? '◆' : '✦'}
       </span>
 
+      {item.star ? (
+        <HandStar
+          className="pointer-events-none absolute -right-4 -top-5 h-8 w-8 md:-right-6 md:-top-7 md:h-10 md:w-10"
+          strokeWidth={2}
+        />
+      ) : null}
+
       <div className="text-2xl md:text-[28px]" aria-hidden>
         {item.icon}
       </div>
@@ -82,29 +94,25 @@ function InterestCard({ item, index }) {
   )
 }
 
-function Polaroid({ poly, index }) {
+function PolaroidTile({ poly, index }) {
   return (
-    <motion.figure
-      initial={{ y: poly.yStart, rotate: poly.rotate - 4, opacity: 0 }}
-      whileInView={{ y: 0, rotate: poly.rotate, opacity: 1 }}
+    <motion.div
+      initial={{ y: 16, opacity: 0 }}
+      whileInView={{ y: 0, opacity: 1 }}
       viewport={viewOnce}
       transition={{
-        duration: 0.7,
+        duration: 0.55,
         ease: [0.22, 1, 0.36, 1],
-        delay: 0.15 + index * 0.12,
+        delay: 0.15 + index * 0.06,
       }}
-      className="bg-white p-3 pb-10 shadow-[0_18px_30px_-18px_rgba(17,17,17,0.35),0_2px_4px_rgba(17,17,17,0.08)]"
-      style={{ rotate: `${poly.rotate}deg` }}
     >
-      <div
-        className="aspect-[3/4] w-full bg-gradient-to-br from-gray-200 via-gray-200 to-gray-300"
-        role="img"
-        aria-label={poly.caption}
+      <Polaroid
+        src={poly.src}
+        caption={poly.caption}
+        rotation={poly.rotation}
+        alt={poly.caption}
       />
-      <figcaption className="f-hand mt-3 text-center text-xl leading-none text-ink/75 md:text-2xl">
-        {poly.caption}
-      </figcaption>
-    </motion.figure>
+    </motion.div>
   )
 }
 
@@ -129,7 +137,12 @@ export default function Beyond() {
           variants={fadeUp(0.05)}
           className="f-serif mt-8 max-w-4xl text-[clamp(36px,5vw,72px)] font-bold leading-[1.2] tracking-tight text-ink"
         >
-          Engineer by degree. Cook, reader, and digicam{' '}
+          Engineer by degree. Reader,{' '}
+          <span className="relative inline-block">
+            food hunter
+            <WavyUnderline className="pointer-events-none absolute -bottom-1 left-0 w-full md:-bottom-2" />
+          </span>
+          , and digicam{' '}
           <span className="relative inline-block">
             enthusiast
             <Squiggle className="pointer-events-none absolute -bottom-1 left-0 w-full md:-bottom-2" />
@@ -137,7 +150,30 @@ export default function Beyond() {
           by choice.
         </motion.h2>
 
-        <div className="mt-14 grid gap-12 md:mt-16 md:grid-cols-12 md:gap-16">
+        <motion.p
+          initial="hidden"
+          whileInView="show"
+          viewport={viewOnce}
+          variants={fadeUp(0.1)}
+          className="mt-10 max-w-2xl text-base leading-[1.75] text-ink/85 md:text-[17px]"
+        >
+          I&apos;m Stuti — I build things across AI, hardware, and the full stack.
+          When I&apos;m not writing code I&apos;m reading (currently on a big
+          fiction kick), wandering around with my digicam, or always looking for
+          the best meal in whatever city I&apos;m in. I co-run{' '}
+          <a
+            href="https://www.instagram.com/lilbytes.tech/"
+            target="_blank"
+            rel="noreferrer"
+            className="underline decoration-terracotta decoration-2 underline-offset-4 hover:text-terracotta"
+          >
+            Lil Bytes
+          </a>{' '}
+          with Krisha — a small corner of the internet where we try to make CS
+          concepts actually make sense.
+        </motion.p>
+
+        <div className="mt-14 grid gap-12 md:mt-16 md:grid-cols-[55fr_45fr] md:gap-16">
           <motion.div
             initial="hidden"
             whileInView="show"
@@ -146,7 +182,6 @@ export default function Beyond() {
               hidden: {},
               show: { transition: { staggerChildren: 0.1, delayChildren: 0.05 } },
             }}
-            className="md:col-span-7"
           >
             <p className="eyebrow text-muted">A few favorite things</p>
             <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-5">
@@ -156,17 +191,11 @@ export default function Beyond() {
             </div>
           </motion.div>
 
-          <div className="relative md:col-span-5">
+          <div className="relative">
             <p className="eyebrow text-muted">From the camera roll</p>
-            <div className="relative mt-5 flex flex-col gap-7 overflow-visible md:gap-8">
+            <div className="mt-5 grid grid-cols-2 gap-4 md:gap-5">
               {polaroids.map((p, i) => (
-                <div
-                  key={p.caption}
-                  className={i % 2 === 0 ? 'self-start md:pr-8' : 'self-end md:pl-8'}
-                  style={{ width: 'min(220px, 70%)' }}
-                >
-                  <Polaroid poly={p} index={i} />
-                </div>
+                <PolaroidTile key={p.caption} poly={p} index={i} />
               ))}
             </div>
           </div>

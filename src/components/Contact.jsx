@@ -1,9 +1,14 @@
+import { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import Squiggle from './Squiggle'
+import MagneticButton from './MagneticButton'
+import { HandStar } from './Doodles'
+import { gsap, ScrollTrigger } from '../lib/scroll'
+import { prefersReducedMotion } from '../hooks/useReducedMotion'
 
 const links = [
   { label: 'LinkedIn', href: 'https://www.linkedin.com/in/stutipandya' },
-  { label: 'GitHub', href: 'https://github.com/stutipandya' },
+  { label: 'GitHub', href: 'https://github.com/stupnd' },
   { label: 'Resume (PDF)', href: '/resume.pdf' },
   { label: 'Lil Bytes', href: 'https://www.instagram.com/lilbytes.tech/' },
 ]
@@ -38,6 +43,46 @@ const fadeUp = (delay = 0) => ({
 })
 
 export default function Contact() {
+  const starWrapRef = useRef(null)
+
+  useEffect(() => {
+    if (prefersReducedMotion()) return undefined
+    const wrap = starWrapRef.current
+    if (!wrap) return undefined
+    const paths = wrap.querySelectorAll('path')
+    if (!paths.length) return undefined
+
+    const lens = Array.from(paths).map((p) => {
+      try {
+        return p.getTotalLength()
+      } catch {
+        return 100
+      }
+    })
+    paths.forEach((p, i) => {
+      p.style.strokeDasharray = lens[i]
+      p.style.strokeDashoffset = lens[i]
+    })
+
+    const scrollerEl = document.querySelector('#tab-panel')
+    const tween = gsap.to(paths, {
+      strokeDashoffset: 0,
+      duration: 0.7,
+      ease: 'power2.out',
+      stagger: 0.1,
+      scrollTrigger: {
+        trigger: wrap,
+        scroller: scrollerEl || undefined,
+        start: 'top 85%',
+        toggleActions: 'play none none reverse',
+      },
+    })
+    return () => {
+      tween.scrollTrigger?.kill()
+      tween.kill()
+    }
+  }, [])
+
   return (
     <section className="flex min-h-full items-center bg-terracotta text-bg">
       <div className="mx-auto w-full max-w-4xl px-5 py-16 text-center md:px-8 md:py-24">
@@ -46,8 +91,15 @@ export default function Contact() {
           whileInView="show"
           viewport={viewOnce}
           variants={fadeUp(0)}
-          className="f-serif text-[clamp(40px,7vw,88px)] font-bold leading-[1.1] tracking-tight text-bg"
+          className="f-serif relative inline-block text-[clamp(40px,7vw,88px)] font-bold leading-[1.1] tracking-tight text-bg"
         >
+          <span
+            ref={starWrapRef}
+            className="pointer-events-none absolute -left-8 -top-6 block h-8 w-8 rotate-[-12deg] md:-left-14 md:-top-10 md:h-12 md:w-12"
+            aria-hidden
+          >
+            <HandStar stroke="#FAFAF8" strokeWidth={2} className="h-full w-full" />
+          </span>
           Let&apos;s build{' '}
           <span className="relative inline-block">
             something.
@@ -67,14 +119,17 @@ export default function Contact() {
           className="relative mt-14 inline-block"
         >
           <DownArrow className="pointer-events-none absolute -left-14 -top-14 h-16 w-10 md:-left-20 md:-top-16 md:h-20 md:w-12" />
-          <a
-            href="mailto:stuti.pandya0@gmail.com"
-            className="group f-display inline-block text-2xl font-bold tracking-tight text-bg md:text-4xl"
-          >
-            <span className="border-b-2 border-transparent pb-1 transition-colors duration-200 group-hover:border-sun group-hover:text-sun">
-              stuti.pandya0@gmail.com
-            </span>
-          </a>
+          <MagneticButton strength={0.35} radius={180}>
+            <a
+              href="mailto:stuti.pandya0@gmail.com"
+              data-cursor="write"
+              className="group f-display inline-block text-2xl font-bold tracking-tight text-bg md:text-4xl"
+            >
+              <span className="border-b-2 border-transparent pb-1 transition-colors duration-200 group-hover:border-sun group-hover:text-sun">
+                stuti.pandya0@gmail.com
+              </span>
+            </a>
+          </MagneticButton>
         </motion.div>
 
         <motion.ul

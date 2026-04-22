@@ -1,16 +1,40 @@
-# React + Vite
+# Stuti Pandya — Portfolio
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React 19 + Vite + Tailwind 4 + Framer Motion + GSAP/Lenis. Deploys on Vercel.
 
-Currently, two official plugins are available:
+## Dev
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+npm install
+npm run dev
+```
 
-## React Compiler
+## Deploy
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Push to a Vercel-linked repo. The `/api/*` functions deploy as Node serverless functions automatically alongside the static Vite build.
 
-## Expanding the ESLint configuration
+## Environment variables (Vercel)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+The "Ask my portfolio" chat on Home is powered by `api/chat.ts`. Configure one of the following on the Vercel project's **Settings → Environment Variables**:
+
+| Variable          | Required | Default                       | Notes                                        |
+| ----------------- | -------- | ----------------------------- | -------------------------------------------- |
+| `AI_PROVIDER`     | no       | `groq`                        | `groq` or `openai`.                          |
+| `GROQ_API_KEY`    | if Groq  | —                             | Free tier available at console.groq.com.     |
+| `GROQ_MODEL`      | no       | `llama-3.3-70b-versatile`     |                                              |
+| `OPENAI_API_KEY`  | if OpenAI| —                             |                                              |
+| `OPENAI_MODEL`    | no       | `gpt-4o-mini`                 |                                              |
+| `ALLOW_CHAT`      | no       | _unset (enabled)_             | Set to `false` to kill-switch the chat.      |
+| `GITHUB_USERNAME` | no       | `stupnd`                      | Drives the "Now building" strip on Home.     |
+
+If no key is configured, the chat degrades gracefully to canned fallback answers so the UI never breaks.
+
+## Endpoints
+
+- `POST /api/chat` — streaming LLM chat grounded on `src/data/knowledge.js`. Rate-limited (10 msgs/min per IP).
+- `GET /api/github` — cached public GitHub activity (last 3 commits + 53-week contribution heatmap). 15-min in-memory + edge cache.
+
+## Keyboard
+
+- `⌘K` / `Ctrl+K` — open the command palette.
+- `Esc` — close the command palette or back out of a project case study.

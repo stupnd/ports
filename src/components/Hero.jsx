@@ -1,5 +1,12 @@
-import { motion } from 'framer-motion'
+import { lazy, Suspense, useEffect } from 'react'
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import MarqueeTicker from './MarqueeTicker'
+import MagneticButton from './MagneticButton'
+import { HandCircle } from './Doodles'
+import useReducedMotion from '../hooks/useReducedMotion'
+
+const AskMeChat = lazy(() => import('./AskMeChat'))
+const GradientMesh = lazy(() => import('./GradientMesh'))
 
 const words = ['STUTI', 'PANDYA']
 
@@ -66,16 +73,64 @@ function StarDoodle({ className = '' }) {
 }
 
 export default function Hero() {
+  const reduced = useReducedMotion()
+  const mx = useMotionValue(0)
+  const my = useMotionValue(0)
+  const sx = useSpring(mx, { stiffness: 60, damping: 18, mass: 0.4 })
+  const sy = useSpring(my, { stiffness: 60, damping: 18, mass: 0.4 })
+  const tx1 = useTransform(sx, (v) => v * -12)
+  const ty1 = useTransform(sy, (v) => v * -8)
+  const tx2 = useTransform(sx, (v) => v * 12)
+  const ty2 = useTransform(sy, (v) => v * 8)
+
+  useEffect(() => {
+    if (reduced) return undefined
+    if (window.matchMedia('(pointer: coarse)').matches) return undefined
+    const onMove = (e) => {
+      const nx = (e.clientX / window.innerWidth) * 2 - 1
+      const ny = (e.clientY / window.innerHeight) * 2 - 1
+      mx.set(nx)
+      my.set(ny)
+    }
+    window.addEventListener('mousemove', onMove, { passive: true })
+    return () => window.removeEventListener('mousemove', onMove)
+  }, [reduced, mx, my])
+
   return (
-    <section className="flex min-h-full flex-col bg-bg">
-      <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center px-5 py-14 md:px-8 md:py-20">
+    <section className="relative flex min-h-full flex-col bg-bg">
+      <Suspense fallback={null}>
+        <div className="pointer-events-none absolute inset-0">
+          <div
+            className="absolute inset-x-0 top-0 h-[70vh] max-h-[720px]"
+            style={{
+              maskImage:
+                'linear-gradient(to bottom, black 40%, rgba(0,0,0,0.5) 70%, transparent 100%)',
+              WebkitMaskImage:
+                'linear-gradient(to bottom, black 40%, rgba(0,0,0,0.5) 70%, transparent 100%)',
+            }}
+          >
+            <GradientMesh />
+          </div>
+        </div>
+      </Suspense>
+      <div className="relative mx-auto w-full max-w-6xl px-5 py-14 md:px-8 md:py-20">
         <motion.div variants={container} initial="hidden" animate="show" className="relative">
           <h1 className="f-display relative inline-block text-[clamp(64px,10vw,140px)] font-extrabold leading-[0.92] tracking-[-0.02em] text-ink">
             <span className="sr-only">Stuti Pandya</span>
-            <motion.span variants={word} className="mr-[0.2em] inline-block" aria-hidden>
+            <motion.span
+              variants={word}
+              className="mr-[0.2em] inline-block"
+              style={{ x: tx1, y: ty1 }}
+              aria-hidden
+            >
               {words[0]}
             </motion.span>
-            <motion.span variants={word} className="relative inline-block" aria-hidden>
+            <motion.span
+              variants={word}
+              className="relative inline-block"
+              style={{ x: tx2, y: ty2 }}
+              aria-hidden
+            >
               {words[1]}
               <SquiggleUnderline className="pointer-events-none absolute -bottom-3 left-0 w-[110%] md:-bottom-4" />
             </motion.span>
@@ -102,12 +157,22 @@ export default function Hero() {
             transition={{ duration: 0.6, ease: 'easeOut', delay: 0.72 }}
             className="mt-6"
           >
-            <span className="inline-flex items-center gap-2 rounded-full bg-terracotta/10 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-terracotta ring-1 ring-terracotta/20">
-              <span aria-hidden>✦</span>
-              Available for New Grad Roles — Jan 2027
-            </span>
+            <MagneticButton strength={0.25} radius={160}>
+              <span className="relative inline-flex items-center gap-2 rounded-full bg-terracotta/10 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-terracotta ring-1 ring-terracotta/20">
+                <span aria-hidden>✦</span>
+                Available for New Grad Roles — Jan 2027
+                <HandCircle
+                  className="pointer-events-none absolute -inset-x-4 -inset-y-3 h-[calc(100%+24px)] w-[calc(100%+32px)]"
+                  aria-hidden
+                />
+              </span>
+            </MagneticButton>
           </motion.div>
         </motion.div>
+
+        <Suspense fallback={null}>
+          <AskMeChat />
+        </Suspense>
       </div>
 
       <MarqueeTicker />
