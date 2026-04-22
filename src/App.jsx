@@ -74,7 +74,7 @@ function App() {
           }
         }}
       />
-      <main className="relative min-h-0 flex-1 overflow-hidden">
+      <main className="relative min-h-0 flex-1 overflow-hidden bg-bg">
         <ScrollProvider activeTab={panelKey}>
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
@@ -84,7 +84,7 @@ function App() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.25, ease: 'easeOut', delay: 0.4 }}
-              className="absolute inset-0 overflow-y-auto pb-28 md:pb-24"
+              className="absolute inset-0 overflow-y-auto bg-bg pb-28 md:pb-24"
             >
               {notFound ? (
                 <Suspense fallback={null}>

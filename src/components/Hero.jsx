@@ -132,7 +132,7 @@ export default function Hero() {
   return (
     <section
       ref={sectionRef}
-      className="relative flex min-h-full flex-col overflow-hidden bg-bg"
+      className="relative flex min-h-[100dvh] flex-col overflow-x-hidden overflow-y-visible bg-bg md:min-h-full md:overflow-hidden"
     >
       <div
         aria-hidden

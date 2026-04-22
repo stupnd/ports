@@ -31,7 +31,9 @@ export default function MarqueeTicker({
   // backgrounds), light tone uses a CSS mask so the marquee itself fades to
   // transparent at the edges. Dark tone keeps the traditional ink gradient
   // since there's no background element to protect.
-  const surface = isLight ? 'bg-transparent' : 'bg-ink'
+  // Solid band on small viewports so masked edge pixels composite over page bg
+  // (avoids iOS “white seam” under the ticker); desktop stays transparent over orbs.
+  const surface = isLight ? 'max-md:bg-bg md:bg-transparent' : 'bg-ink'
   const textColor = isLight ? 'text-ink/70' : 'text-bg'
   const maskStyle = isLight
     ? {
@@ -44,24 +46,25 @@ export default function MarqueeTicker({
 
   return (
     <div
-      className={`relative w-full overflow-hidden py-3 ${surface} ${className}`}
+      className={`relative w-full py-3 ${surface} ${className}`}
       aria-label="About at a glance"
-      style={maskStyle}
     >
-      <div
-        className={`marquee-track flex w-max whitespace-nowrap${
-          isReverse ? ' is-reverse' : ''
-        }`}
-        style={{ animationDuration: `${speed}s` }}
-      >
-        {content.map((item, i) => (
-          <div key={`${item}-${i}`} className="flex items-center">
-            <span className={`eyebrow px-7 ${textColor}`}>{item}</span>
-            <span className="text-terracotta" aria-hidden>
-              ✦
-            </span>
-          </div>
-        ))}
+      <div className="relative overflow-hidden" style={isLight ? maskStyle : undefined}>
+        <div
+          className={`marquee-track flex w-max whitespace-nowrap${
+            isReverse ? ' is-reverse' : ''
+          }`}
+          style={{ animationDuration: `${speed}s` }}
+        >
+          {content.map((item, i) => (
+            <div key={`${item}-${i}`} className="flex items-center">
+              <span className={`eyebrow px-7 ${textColor}`}>{item}</span>
+              <span className="text-terracotta" aria-hidden>
+                ✦
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
 
       {!isLight ? (
