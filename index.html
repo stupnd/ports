@@ -8,15 +8,17 @@
       name="description"
       content="Stuti Pandya — Computer engineer, builder, creative technologist. Projects, experience, and contact."
     />
-    <!-- Open Graph / Twitter — explicit image so link previews don’t pick a random gallery photo -->
+    <!-- Open Graph — __OG_ORIGIN__ / __OG_IMAGE__ replaced at build (Vercel VERCEL_URL or VITE_SITE_URL) -->
     <meta property="og:title" content="Stuti Pandya — stuti.tech" />
     <meta
       property="og:description"
       content="Stuti Pandya — Computer engineer, builder, creative technologist. Projects, experience, and contact."
     />
-    <meta property="og:url" content="https://stuti.tech/" />
+    <meta property="og:url" content="__OG_ORIGIN__/" />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://stuti.tech/og.png" />
+    <meta property="og:image" content="__OG_IMAGE__" />
+    <meta property="og:image:secure_url" content="__OG_IMAGE__" />
+    <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="1376" />
     <meta property="og:image:height" content="768" />
     <meta property="og:image:alt" content="Stuti Pandya — portfolio preview" />
@@ -26,9 +28,10 @@
       name="twitter:description"
       content="Stuti Pandya — Computer engineer, builder, creative technologist. Projects, experience, and contact."
     />
-    <meta name="twitter:image" content="https://stuti.tech/og.png" />
-    <link rel="image_src" href="https://stuti.tech/og.png" />
-    <!-- After deploy: refresh cached previews (e.g. Facebook Sharing Debugger, LinkedIn Post Inspector, Slack unfurl). -->
+    <meta name="twitter:image" content="__OG_IMAGE__" />
+    <link rel="image_src" href="__OG_IMAGE__" />
+    <!-- Production custom domain: set VITE_SITE_URL=https://stuti.tech in Vercel → Production env. -->
+    <!-- After deploy: iMessage caches previews; reshare after redeploy or add ? to URL when testing. -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
