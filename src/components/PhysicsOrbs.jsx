@@ -8,9 +8,10 @@ const ORBS = [
     id: 'orange',
     xPct: 0.82,
     yPct: 0.15,
-    r: 220,
-    rMobile: 150,
-    mass: 2.4,
+    // Sized down ~22% so the name is the clear first read.
+    r: 172,
+    rMobile: 118,
+    mass: 1.9,
     bg:
       'radial-gradient(circle at 32% 28%, rgba(255,222,196,0.95), rgba(241,118,56,1) 38%, rgba(176,52,12,1) 82%, rgba(120,28,0,1) 100%)',
     shadow:

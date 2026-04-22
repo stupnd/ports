@@ -331,22 +331,16 @@ export default function WIE() {
           style={{ background: `${PALETTE.accent}55` }}
           aria-hidden
         />
-        <motion.blockquote
+        <motion.p
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.5 }}
           transition={{ duration: 0.7, ease: 'easeOut' }}
-          className="f-serif my-10 text-[clamp(28px,3.6vw,48px)] font-bold leading-[1.25] tracking-tight"
+          className="f-serif my-12 text-[clamp(28px,3.6vw,48px)] font-bold leading-[1.25] tracking-tight"
           style={{ color: PALETTE.text }}
         >
-          “Engineering is better when everyone has a seat at the table.”
-        </motion.blockquote>
-        <p
-          className="text-sm font-medium tracking-wide"
-          style={{ color: PALETTE.muted }}
-        >
-          — IEEE WIE uOttawa, 2024–2026
-        </p>
+          Engineering is better when everyone has a seat at the table.
+        </motion.p>
         <div
           className="mt-10 h-px w-full"
           style={{ background: `${PALETTE.accent}55` }}

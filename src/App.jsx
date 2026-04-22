@@ -24,14 +24,18 @@ function isKnownPath(pathname) {
   return KNOWN_PATHS.has(pathname)
 }
 
+// Each tab gets its own accent — the navbar echoes it as a tiny dot on inactive
+// tabs and as the active underline color, so every section has a micro-identity
+// that matches its vibe (orange = home/brand, blue = about, yellow = scrapbook,
+// green = projects, pink = experience, purple = WIE, peach = contact).
 const tabs = [
-  { id: 'home', label: 'Home', component: Hero },
-  { id: 'about', label: 'About', component: About },
-  { id: 'beyond', label: 'Beyond the Code', component: Beyond },
-  { id: 'projects', label: 'Projects', component: Projects },
-  { id: 'experience', label: 'Experience', component: Experience },
+  { id: 'home', label: 'Home', component: Hero, accent: '#E8521A' },
+  { id: 'about', label: 'About', component: About, accent: '#2A4BCC' },
+  { id: 'beyond', label: 'Beyond the Code', component: Beyond, accent: '#F0C93A' },
+  { id: 'projects', label: 'Projects', component: Projects, accent: '#1A6B45' },
+  { id: 'experience', label: 'Experience', component: Experience, accent: '#F15BB5' },
   { id: 'wie', label: 'WIE', component: WIE, accent: '#9B5DE5' },
-  { id: 'contact', label: 'Contact', component: Contact },
+  { id: 'contact', label: 'Contact', component: Contact, accent: '#F7A68A' },
 ]
 
 function App() {
