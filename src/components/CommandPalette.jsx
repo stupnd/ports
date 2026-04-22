@@ -2,19 +2,7 @@ import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Command } from 'cmdk'
 import { projects, bio } from '../data/knowledge'
-
-// Tabs list is intentionally hard-coded here (rather than imported from App)
-// so the palette stays decoupled — it talks to App via the
-// 'portfolio:navigate' event bus.
-const tabs = [
-  { id: 'home', label: 'Home', hint: 'Hero + Ask me anything' },
-  { id: 'about', label: 'About', hint: 'Bio + currently' },
-  { id: 'beyond', label: 'Beyond the Code', hint: 'Interests, photos' },
-  { id: 'projects', label: 'Projects', hint: 'Things shipped' },
-  { id: 'experience', label: 'Experience', hint: 'Work timeline' },
-  { id: 'wie', label: 'WIE', hint: 'IEEE Women in Engineering' },
-  { id: 'contact', label: 'Contact', hint: 'Email' },
-]
+import { tabs } from '../config/tabs'
 
 function navigate(tabId) {
   window.dispatchEvent(new CustomEvent('portfolio:navigate', { detail: tabId }))

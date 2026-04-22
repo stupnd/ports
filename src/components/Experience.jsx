@@ -11,12 +11,12 @@ const roles = [
     title: 'Software Developer Co-op',
     dates: 'May – Aug 2026',
     incoming: true,
-    line: "Joining the TrendAI division in May 2026 as a software developer co-op, working on the ML pipelines behind AI-driven cybersecurity threat detection. Incoming role, so the specifics will land once I'm on the ground — expect it to sit at the intersection of Python, modern ML tooling, and cloud infrastructure.",
-    shippedLabel: "What I'm excited about",
+    line: 'Incoming software developer co-op at TrendAI (Trend Micro Canada), May 2026. Focus will be ML pipelines for threat detection. I will know more once I start; likely Python services, model tooling, and cloud deploys.',
+    shippedLabel: "What I'll be working on",
     shipped: [
-      'ML pipelines powering real-time threat detection at scale.',
-      'First seat inside a dedicated security-ML team.',
-      'Python × modern ML tooling × cloud infrastructure, hands on.',
+      'ML pipelines behind real-time threat detection.',
+      'First role on a security-focused ML team.',
+      'Python, model tooling, and cloud infrastructure in production.',
     ],
     tags: ['Python', 'ML pipelines', 'Cloud infra', 'Security ML'],
     accent: 'cobalt',
@@ -26,12 +26,12 @@ const roles = [
     sub: null,
     title: 'Support Engineer Intern',
     dates: 'Sep – Dec 2025',
-    line: "Debugged production issues in distributed event broker systems for enterprise clients — the kind of pub/sub infrastructure that sits behind trading platforms, airlines, and large SaaS backends. Advised customers on cloud architecture decisions across AWS, Azure, and GCP, and walked away with a much better intuition for how event-driven systems actually behave at scale.",
+    line: 'Production debugging on distributed PubSub+ brokers for enterprise clients (trading, airlines, large SaaS backends). Helped customers choose AWS, Azure, or GCP layouts for event-driven systems.',
     shippedLabel: 'Shipped',
     shipped: [
       'Triaged and resolved production pub/sub incidents for enterprise clients.',
-      'Guided cloud-architecture decisions across AWS, Azure, and GCP deployments.',
-      'Built deep intuition for how event-driven systems actually behave under load.',
+      'Guided cloud architecture across AWS, Azure, and GCP deployments.',
+      'Learned how pub/sub behaves under load: backpressure, ordering, failover paths.',
     ],
     tags: ['PubSub+', 'Event brokers', 'AWS', 'Azure', 'GCP'],
     accent: 'terracotta',
@@ -41,7 +41,7 @@ const roles = [
     sub: null,
     title: 'Software Engineering Intern',
     dates: 'May 2024 – Aug 2025 · 3 terms',
-    line: 'Three co-op terms building internal tooling for a federal science organization. Wrote custom Salesforce apps in Apex and Lightning Web Components, shipped automation workflows that cut manual processing time, tuned Oracle DB queries across internal data systems, and built C# pipelines gluing the legacy and cloud worlds together.',
+    line: 'Three co-op terms building internal tooling for a federal science organization. Salesforce apps in Apex and Lightning Web Components, automation that cut manual processing time, Oracle tuning, and C# pipelines between legacy systems and Salesforce.',
     shippedLabel: 'Shipped',
     shipped: [
       'Custom Salesforce apps in Apex + Lightning Web Components.',
@@ -84,7 +84,7 @@ const ACCENT_BG_SOFT = {
 const stats = [
   { n: 3, label: 'Companies' },
   { n: 4, label: 'Co-op terms' },
-  { n: 16, label: 'Months shipped' },
+  { n: 16, label: 'Months on co-op' },
 ]
 
 const row = (i = 0) => ({
@@ -192,7 +192,7 @@ export default function Experience() {
         >
           Where I&apos;ve{' '}
           <span className="relative inline-block">
-            built things.
+            worked.
             <Squiggle className="pointer-events-none absolute -bottom-1 left-0 w-full md:-bottom-2" />
           </span>
         </motion.h2>
@@ -204,9 +204,8 @@ export default function Experience() {
           transition={{ duration: 0.55, ease: 'easeOut', delay: 0.12 }}
           className="mt-6 max-w-2xl text-base leading-[1.7] text-muted md:text-[17px]"
         >
-          Four co-op terms across two industries, plus one incoming role. From federal-government
-          data plumbing and Salesforce dev work, to debugging distributed event brokers at Solace,
-          to joining Trend Micro&apos;s ML threat-detection team in 2026.
+          Four co-op terms across two industries, plus one incoming role: federal Salesforce and
+          data work, Solace pub/sub support, then TrendAI in 2026.
         </motion.p>
 
         {/* Stats strip */}

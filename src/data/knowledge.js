@@ -22,11 +22,11 @@ export const bio = {
     githubHandle: 'stupnd',
     lilBytes: 'https://www.instagram.com/lilbytes.tech/',
   },
-  tagline: 'Computer Engineer. Builder. Creative Technologist.',
+  tagline: 'Computer engineering at uOttawa. AI, full stack, and embedded.',
   summary:
-    "4th-year Computer Engineering student at uOttawa, graduating December 2026. Builds across AI/ML, full-stack, and embedded. IEEE WIE Chair 2026–27. Heading to Grace Hopper 2026. Co-runs Lil Bytes, a tech-education page on Instagram.",
+    'Fourth-year Computer Engineering at uOttawa, graduating December 2026. Work spans AI/ML apps, full-stack web, and embedded. IEEE WIE Chair 2026–27. Grace Hopper 2026. Co-runs Lil Bytes on Instagram with Krisha.',
   workingStyle:
-    'Learns by building real things end-to-end. Uses Cursor + Claude for architecture and planning. Prefers shipping over theorizing.',
+    'Builds end to end. Uses Cursor + Claude for design notes and refactors. Prefers a working prototype over a long spec.',
 }
 
 export const skills = {
@@ -45,13 +45,13 @@ export const projects = [
     title: 'Sage',
     tagline: 'Full-stack AI investing assistant',
     blurb:
-      'Full-stack AI investing assistant — Next.js + FastAPI with Anthropic agentic tool use, streaming responses, and real-time financial data.',
+      'Next.js + FastAPI app with Anthropic tool use, streaming tokens, and live market data in the chat.',
     stack: ['Next.js', 'FastAPI', 'Anthropic API', 'Supabase', 'Recharts'],
     github: 'https://github.com/stupnd/sage',
     live: 'https://pulse-ai-investing.vercel.app',
     highlights: [
       'Streaming Claude responses rendered into a Next.js chat UI.',
-      'Agentic tool use — model calls live quote + chart tools, results stream back.',
+      'Agentic tool use: model calls live quote + chart tools, results stream back.',
       'FastAPI BFF keeps third-party API keys server-side and composes responses.',
       'Supabase auth + row-level security for per-user portfolios.',
     ],
@@ -59,30 +59,29 @@ export const projects = [
     accent: 'cobalt',
     caseStudy: {
       problem:
-        "Most investing tools either give you raw data with no explanation, or oversimplified advice with no transparency. There's no middle layer that thinks with you in real time — one that can fetch a live quote, explain what it means, and render a chart inline without losing the thread of the conversation.",
+        'Most investing tools dump raw tickers or give vague tips. I wanted a middle layer that can pull a live quote, explain it in plain language, and drop a chart in the thread without losing context.',
       pullQuote:
-        "Streaming isn't just a UX nicety — it completely changes how a user trusts an AI response. Watching it think feels more honest than getting a wall of text.",
+        'Streaming tokens turned out to be the trust layer. People relax when they can watch the model work instead of staring at a spinner.',
       decisions: [
         {
           title: 'Streaming responses, not batched',
-          body: 'The UI feels alive instead of frozen during inference. Watching tokens appear is the difference between "is this thing working?" and "I trust this."',
+          body: 'The UI stays warm during inference. Seeing tokens land answers “is this hung?” before the user has to ask.',
         },
         {
           title: 'Agentic tool use over RAG',
-          body: 'The model fetches real quotes and fundamentals mid-response instead of hallucinating numbers from a stale vector store. Finance data has a half-life of seconds.',
+          body: 'Quotes and fundamentals are fetched mid-response from live APIs. Stale embeddings would lie about prices within minutes.',
         },
         {
           title: 'Supabase for auth + persistence',
-          body: "Row-level security and managed auth in ~30 lines of SQL. Kept the focus on the interesting parts instead of spinning up a custom backend.",
+          body: 'RLS and hosted auth in a small amount of SQL so the interesting work stayed in the app and the model layer.',
         },
       ],
       metrics: [
         { number: '2', suffix: 's', label: 'time to first token' },
-        { number: '100', suffix: '%', label: 'live-data grounded answers' },
-        { number: '1', suffix: '', label: 'publicly deployed build' },
+        { number: '100', suffix: '%', label: 'answers grounded on live tools' },
       ],
       lessons:
-        "Streaming isn't just a UX nicety — it completely changes how a user trusts an AI response. Watching it think feels more honest than a batched wall of text.",
+        'Next step I care about: evals for tool-call accuracy and caching hot symbols so repeat questions stay cheap.',
     },
   },
   {
@@ -91,7 +90,7 @@ export const projects = [
     title: 'GlowMatch',
     tagline: 'Real-time skin-tone analysis for makeup matching',
     blurb:
-      'Real-time skin-tone analysis with MediaPipe face-mesh segmentation and Claude Vision for product-level makeup recommendations.',
+      'MediaPipe face mesh for skin-only pixels, plus Claude Vision for product names and short rationale.',
     stack: ['Python', 'MediaPipe', 'Claude Vision API', 'React'],
     github: 'https://github.com/stupnd/glowmatch',
     highlights: [
@@ -103,30 +102,29 @@ export const projects = [
     accent: 'terracotta',
     caseStudy: {
       problem:
-        "Makeup recommendations online are either generic (\"for warm undertones\") or require a human expert. There's no tool that looks at your actual face and gives you specific product guidance — and the ones that try usually sample pixels from your hair or background.",
+        'Online shade matching is either generic (“warm undertone”) or needs a human. Tools that auto-pick pixels often sample hair or the background.',
       pullQuote:
-        "Sometimes the best ML decision is knowing when not to train your own model. Claude Vision with good prompting outperformed a custom classifier I prototyped in half the time.",
+        'I prototyped a small classifier first. Claude Vision with tight prompts beat it on both quality and dev time, so I shipped the LLM path.',
       decisions: [
         {
-          title: 'MediaPipe for landmark detection',
-          body: 'Tone sampling hits cheek + forehead regions specifically — never background or hair. The 468-point mesh is cheap, local, and runs in real time.',
+          title: 'MediaPipe for landmarks',
+          body: 'Sampling targets cheeks and forehead. The 468-point mesh runs locally at full frame rate.',
         },
         {
           title: 'Claude Vision over a custom classifier',
-          body: 'The recommendation reasoning matters as much as the result. A vision LLM returns human-readable explanations; a closed-set classifier only returns a label.',
+          body: 'Users get a sentence of reasoning with the shade name, not just a label from a softmax head.',
         },
         {
-          title: 'Python backend for CV logic',
-          body: 'Keeps the computer-vision stack (OpenCV, MediaPipe, numpy) native and readable. Browser-side CV would have worked but added friction with no upside.',
+          title: 'Python backend for CV',
+          body: 'OpenCV + MediaPipe + NumPy stay in one process I can read and profile. Browser CV would have split the stack for little gain here.',
         },
       ],
       metrics: [
         { number: '30', suffix: 'fps', label: 'live face detection' },
         { number: '1', suffix: 's', label: 'tone analysis latency' },
-        { number: '0', suffix: '', label: 'training required' },
       ],
       lessons:
-        "Sometimes the best ML decision is knowing when not to train your own model. Claude Vision plus good prompting outperformed a custom classifier I'd prototyped, in half the dev time.",
+        'If I revisit it, I would log skin-tone stability across lighting and add a tiny calibration step up front.',
     },
   },
   {
@@ -135,8 +133,8 @@ export const projects = [
     title: 'Trippy',
     tagline: 'Group trip planning, built around consensus',
     blurb:
-      'Collaborative trip planner for groups — vote on flights and stays, rate activities with an 80% consensus rule, and walk away with a day-by-day itinerary everyone agreed on.',
-    stack: ['Next.js 14', 'TypeScript', 'Tailwind CSS', 'React', 'Local Storage'],
+      'Group trip planner: vote on flights and stays, rate activities with an 80% bar, export a shared itinerary.',
+    stack: ['Next.js 14', 'TypeScript', 'Tailwind CSS', 'Local Storage'],
     github: 'https://github.com/stupnd/trippy',
     highlights: [
       'Shareable trips via invite link — no auth friction for collaborators.',
@@ -148,30 +146,29 @@ export const projects = [
     accent: 'forest',
     caseStudy: {
       problem:
-        "Group trips fall apart in the planning phase — one person books a flight everyone hates, someone vetoes the Airbnb last minute, and the itinerary never gets finished. There's no tool built around group consensus, only solo planning tools used awkwardly by groups.",
+        'Group trips die in planning: someone books a flight the group hates, someone vetoes the Airbnb, the itinerary never ships. Solo planners are not built for group rules.',
       pullQuote:
-        "The hardest product problem wasn't the tech — it was deciding what \"agreement\" means for a group. The 80% rule was the design insight that made everything else feel fair.",
+        'The hard part was defining “agreed” for five people with different priorities. Fixing that threshold unlocked the rest of the UI.',
       decisions: [
         {
           title: '80% consensus, not unanimous',
-          body: "Unanimous kills momentum — one hold-out stalls the whole group. 80% keeps the trip moving while still feeling fair. That threshold was the design insight, not the code.",
+          body: 'One holdout can stall a trip forever. Eighty percent kept momentum while still feeling fair in user tests.',
         },
         {
           title: 'Invite-via-link, no auth',
-          body: 'Zero friction for collaborators. The person planning the trip is the only one who needs an account; everyone else joins in one click.',
+          body: 'Only the organizer needs an account. Everyone else lands from one URL.',
         },
         {
-          title: 'In-memory store (for now)',
-          body: 'Intentionally simple for hackathon speed — a clean module boundary so swapping to Supabase is a one-file change when usage justifies it.',
+          title: 'In-memory store for the hackathon',
+          body: 'One module boundary so swapping in Supabase later is a file swap, not a rewrite.',
         },
       ],
       metrics: [
-        { number: '7', suffix: '', label: 'core modules shipped' },
+        { number: '7', suffix: '', label: 'core modules' },
         { number: '80', suffix: '%', label: 'consensus threshold' },
-        { number: '1', suffix: '', label: 'hackathon MVP' },
       ],
       lessons:
-        "The hardest product problem wasn't the tech — it was deciding what \"agreement\" means for a group. The 80% rule was the design insight that made everything else feel fair.",
+        'When usage shows up, I would persist trips in Supabase and add light abuse checks on public invite links.',
     },
   },
   {
@@ -180,7 +177,7 @@ export const projects = [
     title: 'Bridge',
     tagline: 'Capstone — real-time ASL translation glove',
     blurb:
-      'Capstone project. A glove with BLE flex sensors on an Arduino Nano ESP32, streaming gesture data to a React Native app that translates ASL in real time.',
+      'Capstone: BLE flex sensors on an Arduino Nano ESP32, gesture frames to a React Native app for live ASL text.',
     stack: ['Arduino Nano ESP32', 'BLE', 'Flex sensors', 'React Native'],
     github: 'https://github.com/stupnd/Bridge',
     highlights: [
@@ -192,31 +189,31 @@ export const projects = [
     role: 'Embedded + mobile, full pipeline',
     accent: 'sun',
     caseStudy: {
+      caseStudyVariant: 'technical',
       problem:
-        'Wearable ASL translators typically route data through a phone server, adding round-trip latency that kills the real-time feel. Bridge moves classification onto the glove itself so gestures become text in under 100 ms.',
-      pullQuote:
-        'The glove does the inference; the phone is just a screen. That\'s what makes it feel alive.',
-      decisions: [
+        'Many glove prototypes bounce every frame to a phone or cloud for inference. That round trip reads sluggish on video. Bridge keeps classification on the MCU so text updates feel immediate.',
+      pullQuote: null,
+      systemNotes: [
         {
-          title: 'On-device classification, not cloud inference',
-          body: 'A compact classifier fits comfortably in ESP32 SRAM and keeps end-to-end latency under 100 ms even with BLE overhead.',
+          title: 'Firmware path',
+          body: '50 Hz sampling on flex + IMU, quantized features, small model in SRAM. BLE advertises a single GATT characteristic for packed int16 frames.',
         },
         {
-          title: 'React Native over native for cross-platform parity',
-          body: 'One codebase for iOS + Android meant more time on the glove and less on UI plumbing.',
+          title: 'BLE framing',
+          body: 'Hand-packed structs instead of JSON. Fewer bytes per gesture, simpler parser on both ends, easier to reason about under load.',
         },
         {
-          title: 'Bit-packed BLE frames',
-          body: 'Hand-rolled compact frames kept BLE throughput comfortable and firmware readable — JSON / protobuf was overkill for a handful of integers.',
+          title: 'React Native client',
+          body: 'One codebase for iOS and Android. UI work stayed thin so most weeks went to sensors and the classifier.',
         },
       ],
       metrics: [
         { number: '50', suffix: 'Hz', label: 'sample rate' },
-        { number: '95', suffix: '%', label: 'gesture accuracy' },
+        { number: '95', suffix: '%', label: 'gesture accuracy (test set)' },
         { number: '80', suffix: 'ms', label: 'end-to-end latency' },
       ],
       lessons:
-        "Embedded work is a latency budget. Every stage — sensor → ADC → classifier → BLE → UI — eats milliseconds you don't get back. Profile early, trim ruthlessly.",
+        'Every hop costs milliseconds: ADC, filter, classify, packetize, BLE, parse, render. I profiled each stage early instead of guessing where the budget went.',
     },
   },
 ]
@@ -229,7 +226,7 @@ export const experience = [
     sub: 'Trend Micro Canada Technologies',
     title: 'Software Developer Co-op',
     dates: 'May – Aug 2026',
-    line: "Incoming software developer co-op in the TrendAI division, working on ML pipelines behind AI-driven cybersecurity threat detection. Role starts May 2026 — expected to sit at the intersection of Python, modern ML tooling, and cloud infrastructure.",
+    line: 'Incoming software developer co-op in the TrendAI division, on ML pipelines for AI-assisted threat detection. Starts May 2026. Expect Python services, model tooling, and cloud deploys once I am on the team.',
     tags: ['Python', 'ML pipelines', 'Cloud infra', 'Security ML'],
   },
   {
@@ -239,7 +236,7 @@ export const experience = [
     sub: null,
     title: 'Support Engineer Intern',
     dates: 'Sep – Dec 2025',
-    line: 'Debugged production issues in distributed event broker systems (PubSub+) for enterprise clients. Advised customers on cloud architecture across AWS, Azure, and GCP; built strong intuition for pub/sub + event-driven systems at scale.',
+    line: 'Production debugging on distributed PubSub+ brokers for enterprise clients (trading, airlines, large SaaS backends). Helped customers pick AWS, Azure, or GCP layouts for event-driven systems.',
     tags: ['PubSub+', 'Event brokers', 'AWS', 'Azure', 'GCP'],
   },
   {
@@ -249,20 +246,20 @@ export const experience = [
     sub: null,
     title: 'Software Engineering Intern',
     dates: 'May 2024 – Aug 2025 · 3 terms',
-    line: 'Three co-op terms building internal tooling for a federal science organization. Shipped Salesforce automation workflows that cut manual processing time, optimized Oracle DB queries, and wrote C# + Apex data pipelines tying the two worlds together.',
+    line: 'Three co-op terms building internal tooling for a federal science org. Salesforce apps in Apex and LWC, automation that cut manual processing, Oracle tuning, and C# + Apex pipelines between legacy and cloud.',
     tags: ['Salesforce', 'Apex', 'C#', 'Oracle SQL', 'SQL Server'],
   },
 ]
 
 export const wie = {
   id: 'wie',
-  tab: 'wie',
+  tab: 'about',
   title: 'IEEE Women in Engineering — uOttawa',
   role: 'Vice Chair (2024–25) → Chair (2025–26 & 2026–27)',
   summary:
     'Two-year tenure chairing one of the most active IEEE student branches on campus. Organized the inaugural WIE hackathon (100+ students), led Git / React / Docker workshops, ran a mentorship program, and organized WIPS 2026 — a speed-networking and awards night.',
   highlights: [
-    'Organized uOttawa WIE\'s first-ever hackathon — 100+ students.',
+    "Organized uOttawa WIE's first-ever hackathon — 100+ students.",
     'Ran technical workshops on Git, React, and Docker.',
     'Built a mentorship program pairing upper-years with first- and second-years.',
     'Organized WIPS 2026 — speed-networking + awards for IEEE WIE.',
@@ -271,10 +268,10 @@ export const wie = {
 
 export const beyond = {
   id: 'beyond',
-  tab: 'beyond',
+  tab: 'about',
   title: 'Beyond the code',
   summary:
-    'Reader (currently on a fiction kick), digicam photographer, and always hunting the best meal in any city. Co-runs Lil Bytes — a tech-education Instagram page that breaks down CS and engineering concepts for a general audience.',
+    'Fiction reader, digicam photographer, and always hunting a good meal in a new city. Co-runs Lil Bytes on Instagram with Krisha (short explainers on CS topics).',
   interests: ['Reading (fiction)', 'Sitcoms', 'Trying new food', 'Digicam photography'],
 }
 
@@ -304,12 +301,11 @@ export const faq = [
   },
   {
     q: 'What makes her different?',
-    a: 'Unusual mix — full-stack AI apps, computer-vision / ML, AND embedded C for microcontrollers. Most candidates only do one. Ships real things, not academic exercises.',
+    a: 'Mix of full-stack AI apps, computer vision / ML, and embedded C on microcontrollers. Ships deployed apps and hardware demos, not only coursework.',
   },
   { q: 'GitHub?', a: 'github.com/stupnd' },
   {
     q: 'Lil Bytes?',
-    a: 'A tech-education Instagram she co-runs — breaks down CS / engineering concepts for a general audience.',
+    a: 'Tech-education Instagram she co-runs with Krisha: short posts that unpack CS and engineering ideas for a general audience.',
   },
 ]
-

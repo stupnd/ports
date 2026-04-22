@@ -55,7 +55,7 @@ const channels = [
 // feel like a real human is on the other end rather than a static footer.
 const statusPills = [
   { label: 'Ottawa, Canada', glyph: '◎' },
-  { label: 'Open for Jan 2027', glyph: '✦' },
+  { label: 'New grad · Jan 2027', glyph: '✦' },
 ]
 
 const viewOnce = { once: true, amount: 0.2 }
@@ -279,10 +279,10 @@ export default function Contact() {
           variants={fadeUp(0.15)}
           className="mt-6 max-w-2xl text-base text-bg/85 md:mt-8 md:text-lg"
         >
-          I&apos;m looking for new-grad SWE/AI engineer roles starting{' '}
-          <span className="font-semibold text-bg">January 2027</span>, and
-          always down to chat about thoughtful software, AI + humans, or
-          side-project ideas.
+          I&apos;m looking for new-grad SWE or AI engineer roles starting{' '}
+          <span className="font-semibold text-bg">January 2027</span>. Happy to
+          talk about internships you are hiring for, a weird bug you are stuck on,
+          or a small tool you want built.
         </motion.p>
 
         {/* Status pills */}
@@ -396,11 +396,9 @@ export default function Contact() {
           className="mt-16 flex flex-col gap-3 border-t border-bg/20 pt-8 md:mt-20 md:flex-row md:items-end md:justify-between"
         >
           <div>
-            <p className="f-serif text-2xl italic text-bg md:text-3xl">
-              — Stuti
-            </p>
+            <p className="f-serif text-2xl italic text-bg md:text-3xl">Stuti</p>
             <p className="mt-1 text-[11px] uppercase tracking-[0.2em] text-bg/60">
-              thanks for reading all the way down here
+              Portfolio · 2026
             </p>
           </div>
           <p className="text-xs text-bg/60">

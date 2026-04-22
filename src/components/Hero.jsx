@@ -6,25 +6,23 @@ import PhysicsOrbs from './PhysicsOrbs'
 import HeroDoodles from './HeroDoodles'
 import { HandCircle } from './Doodles'
 import useReducedMotion from '../hooks/useReducedMotion'
+import { bio } from '../data/knowledge'
 
 const words = ['STUTI', 'PANDYA']
 
-// Second ticker — more personality-forward than the technical lane so the two
-// marquees don't read as duplicates of each other.
 const PERSONALITY_ITEMS = [
-  'Ottawa → building',
+  'Ottawa',
   'coffee + code',
   'hand-drawn UI',
-  'late-night builder',
-  'always shipping',
+  'late-night builds',
   'hackathon energy',
-  'design ✦ engineering',
-  'systems thinker',
+  'design + engineering',
+  'systems thinking',
   'music on loop',
-  'curious about everything',
-  'ship then iterate',
-  'loves a good whiteboard',
-  'scrappy prototyper',
+  'curious',
+  'iterate in public',
+  'whiteboard person',
+  'prototypes',
 ]
 
 const container = {
@@ -53,6 +51,10 @@ const fadeUp = {
     opacity: 1,
     transition: { duration: 0.6, ease: 'easeOut' },
   },
+}
+
+function goContact() {
+  window.dispatchEvent(new CustomEvent('portfolio:navigate', { detail: 'contact' }))
 }
 
 function SquiggleUnderline({ className = '' }) {
@@ -89,15 +91,11 @@ function StarDoodle({ className = '' }) {
   )
 }
 
-
 export default function Hero() {
   const reduced = useReducedMotion()
   const sectionRef = useRef(null)
   const nameBubbleRef = useRef(null)
   const [hintHidden, setHintHidden] = useState(false)
-  // Mobile swaps the physics orb cluster for lightweight floating doodles.
-  // Listen for breakpoint flips so resize/rotation always lands on the right
-  // variant without needing to refresh.
   const [isMobile, setIsMobile] = useState(() => {
     if (typeof window === 'undefined' || !window.matchMedia) return false
     return window.matchMedia('(max-width: 767px)').matches
@@ -136,7 +134,6 @@ export default function Hero() {
       ref={sectionRef}
       className="relative flex min-h-full flex-col overflow-hidden bg-bg"
     >
-      {/* Ambient warm backdrop behind the orb cluster */}
       <div
         aria-hidden
         className="pointer-events-none absolute -right-[12%] -top-[18%] h-[780px] w-[780px] rounded-full"
@@ -147,10 +144,6 @@ export default function Hero() {
         }}
       />
 
-      {/* Desktop: full physics orb cluster with drag-throw + collision.
-          Mobile: scattered hand-drawn doodles that gently float — the orbs get
-          squished/overwhelming on small screens and the doodles match the
-          scrappy / annotated aesthetic of the rest of the site. */}
       {isMobile ? (
         <HeroDoodles />
       ) : (
@@ -160,10 +153,31 @@ export default function Hero() {
           onFirstDrag={() => setHintHidden(true)}
         />
       )}
-      {/* Content wrapper. On mobile we take the remaining vertical space and
-          center the name block so the hero reads balanced instead of top-heavy.
-          On md+ we revert to the top-anchored layout so the orb cluster has
-          room to breathe. */}
+
+      {/* Mobile: tagline + CTAs above the fold before the name block */}
+      {isMobile ? (
+        <div className="pointer-events-auto relative z-20 shrink-0 px-5 pt-6 md:hidden">
+          <p className="max-w-md text-sm leading-snug text-muted">{bio.tagline}</p>
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={goContact}
+              className="relative inline-flex items-center gap-2 rounded-full bg-terracotta/10 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-terracotta ring-1 ring-terracotta/20"
+            >
+              <span aria-hidden>✦</span>
+              New grad · Jan 2027
+            </button>
+            <a
+              href="/Stuti_Pandya_Resume.pdf"
+              download="Stuti_Pandya_Resume.pdf"
+              className="inline-flex items-center rounded-full bg-card px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-ink ring-1 ring-ink/10"
+            >
+              Resume
+            </a>
+          </div>
+        </div>
+      ) : null}
+
       <div className="pointer-events-none relative flex flex-1 items-center md:block md:flex-none">
         <motion.div
           variants={container}
@@ -171,17 +185,11 @@ export default function Hero() {
           animate="show"
           className="relative mx-auto w-full max-w-6xl px-5 md:px-8 md:pb-8 md:pt-20"
         >
-          {/* The name sits inside a soft cream "sticker" bubble — the orbs
-              register its bounding box as a physics obstacle and bounce off it.
-              Mobile sizing is tuned down so the card doesn't dominate the
-              screen. */}
           <h1
             ref={nameBubbleRef}
             className="f-display pointer-events-none relative inline-block rounded-[28px] bg-card px-5 py-4 text-ink text-[clamp(44px,10vw,156px)] font-black leading-[0.95] tracking-[-0.02em] ring-1 ring-ink/10 shadow-[0_20px_60px_-28px_rgba(17,17,17,0.35)] md:rounded-[40px] md:px-8 md:py-6 md:leading-[0.92]"
           >
             <span className="sr-only">Stuti Pandya</span>
-            {/* Stacked on mobile so "PANDYA" never clips against the viewport
-                edge; inline on md+ to keep the single-line statement look. */}
             <motion.span
               variants={word}
               className="block md:mr-[0.2em] md:inline-block"
@@ -205,36 +213,50 @@ export default function Hero() {
             />
           </h1>
 
-          <motion.p
-            variants={fadeUp}
-            initial="hidden"
-            animate="show"
-            transition={{ duration: 0.6, ease: 'easeOut', delay: 0.55 }}
-            className="pointer-events-none mt-10 max-w-2xl text-base text-muted md:text-lg"
-          >
-            Computer Engineer. Builder. Creative Technologist.
-          </motion.p>
+          {!isMobile ? (
+            <>
+              <motion.p
+                variants={fadeUp}
+                initial="hidden"
+                animate="show"
+                transition={{ duration: 0.6, ease: 'easeOut', delay: 0.55 }}
+                className="pointer-events-none mt-10 max-w-2xl text-base text-muted md:text-lg"
+              >
+                {bio.tagline}
+              </motion.p>
 
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            animate="show"
-            transition={{ duration: 0.6, ease: 'easeOut', delay: 0.72 }}
-            className="pointer-events-auto mt-6 inline-block"
-          >
-            <MagneticButton strength={0.25} radius={160}>
-              <span className="relative inline-flex items-center gap-2 rounded-full bg-terracotta/10 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-terracotta ring-1 ring-terracotta/20">
-                <span aria-hidden>✦</span>
-                Available for New Grad Roles — Jan 2027
-                <HandCircle
-                  className="pointer-events-none absolute -inset-x-4 -inset-y-3 h-[calc(100%+24px)] w-[calc(100%+32px)]"
-                  aria-hidden
-                />
-              </span>
-            </MagneticButton>
-          </motion.div>
+              <motion.div
+                variants={fadeUp}
+                initial="hidden"
+                animate="show"
+                transition={{ duration: 0.6, ease: 'easeOut', delay: 0.72 }}
+                className="pointer-events-auto mt-6 flex flex-wrap items-center gap-3"
+              >
+                <MagneticButton strength={0.25} radius={160}>
+                  <button
+                    type="button"
+                    onClick={goContact}
+                    className="relative inline-flex items-center gap-2 rounded-full bg-terracotta/10 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-terracotta ring-1 ring-terracotta/20"
+                  >
+                    <span aria-hidden>✦</span>
+                    New grad roles · Jan 2027
+                    <HandCircle
+                      className="pointer-events-none absolute -inset-x-4 -inset-y-3 h-[calc(100%+24px)] w-[calc(100%+32px)]"
+                      aria-hidden
+                    />
+                  </button>
+                </MagneticButton>
+                <a
+                  href="/Stuti_Pandya_Resume.pdf"
+                  download="Stuti_Pandya_Resume.pdf"
+                  className="inline-flex items-center rounded-full bg-card px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-ink ring-1 ring-ink/10 transition-colors hover:ring-terracotta/30"
+                >
+                  Resume
+                </a>
+              </motion.div>
+            </>
+          ) : null}
 
-          {/* Discoverable hint — fades in briefly, disappears on first drag */}
           <motion.p
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: hintHidden || reduced ? 0 : 0.7, y: 0 }}
@@ -248,9 +270,6 @@ export default function Hero() {
         </motion.div>
       </div>
 
-      {/* Two tickers stacked — top lane scrolls left (technical résumé), bottom
-          lane scrolls right with personality bits, so the eye catches opposing
-          motion and the section feels layered. */}
       <div className="mt-auto flex flex-col gap-1 pb-6 md:pb-10">
         <MarqueeTicker
           tone="light"
@@ -258,13 +277,15 @@ export default function Hero() {
           speed={28}
           className="pointer-events-none relative z-10"
         />
-        <MarqueeTicker
-          tone="light"
-          direction="right"
-          speed={34}
-          items={PERSONALITY_ITEMS}
-          className="pointer-events-none relative z-10 opacity-80"
-        />
+        {!isMobile ? (
+          <MarqueeTicker
+            tone="light"
+            direction="right"
+            speed={34}
+            items={PERSONALITY_ITEMS}
+            className="pointer-events-none relative z-10 opacity-80"
+          />
+        ) : null}
       </div>
     </section>
   )

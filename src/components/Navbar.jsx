@@ -39,6 +39,13 @@ export default function Navbar({ tabs, activeTab, onTabChange }) {
         </button>
 
         <div className="hidden items-center gap-6 md:flex">
+          <a
+            href="/Stuti_Pandya_Resume.pdf"
+            download="Stuti_Pandya_Resume.pdf"
+            className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted underline-offset-4 transition-colors hover:text-ink hover:underline"
+          >
+            Resume
+          </a>
           <button
             type="button"
             onClick={openCmdK}
@@ -137,6 +144,15 @@ export default function Navbar({ tabs, activeTab, onTabChange }) {
             className="absolute inset-x-0 top-full md:hidden"
           >
             <ul className="flex flex-col border-t border-ink/10 bg-bg px-5 py-4 shadow-lg">
+              <li className="border-b border-ink/10 pb-3">
+                <a
+                  href="/Stuti_Pandya_Resume.pdf"
+                  download="Stuti_Pandya_Resume.pdf"
+                  className="f-display text-lg font-bold tracking-tight text-terracotta"
+                >
+                  Resume (PDF)
+                </a>
+              </li>
               {tabs.map((t) => {
                 const isActive = activeTab === t.id
                 const activeColor = t.accent || 'var(--color-terracotta)'

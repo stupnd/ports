@@ -11,6 +11,13 @@
   --color-muted: #888880;
   --color-card: #f2f2ee;
   --color-sand: #f5efe6;
+  /* IEEE WIE page — matches former inline palette, now tokenized for Tailwind */
+  --color-wie-bg: #1a0a2e;
+  --color-wie-surface: #2d1b4e;
+  --color-wie-accent: #9b5de5;
+  --color-wie-pink: #f15bb5;
+  --color-wie-text: #f8f4ff;
+  --color-wie-muted: #b8a9d4;
 
   --font-family-display: 'Syne', system-ui, sans-serif;
   --font-family-serif: 'Playfair Display', Georgia, serif;

@@ -249,16 +249,16 @@ export default function Projects() {
               transition={{ duration: 0.6, ease: 'easeOut', delay: 0.05 }}
               className="f-serif mt-6 max-w-3xl text-[clamp(36px,5vw,72px)] font-bold leading-[1.15] tracking-tight text-bg"
             >
-              Things shipped{' '}
+              Selected{' '}
               <span className="relative inline-block">
-                with care.
+                work
                 <Squiggle className="pointer-events-none absolute -bottom-1 left-0 w-full md:-bottom-2" />
               </span>
             </motion.h2>
 
             <p className="mt-5 max-w-xl text-sm text-bg/60 md:text-[15px]">
-              Click any project for the long-form case study — problem, architecture, decisions,
-              metrics.
+              Open a card for context, tradeoffs, and numbers. GitHub and demos are linked on each
+              tile.
             </p>
 
             <div className="mt-12 space-y-6 md:mt-14 md:space-y-8">

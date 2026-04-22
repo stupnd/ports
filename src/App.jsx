@@ -2,42 +2,21 @@ import { lazy, Suspense, useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
-import About from './components/About'
-import Beyond from './components/Beyond'
-import Projects from './components/Projects'
-import Experience from './components/Experience'
-import WIE from './components/WIE'
-import Contact from './components/Contact'
 import ScrollProvider from './components/ScrollProvider'
 import Cursor from './components/Cursor'
 import TabTransition from './components/TabTransition'
 import PageNav from './components/PageNav'
+import { tabs } from './config/tabs'
 
 const CommandPalette = lazy(() => import('./components/CommandPalette'))
 const NotFound = lazy(() => import('./components/NotFound'))
 
-// Paths the SPA considers "real". Everything else falls through to NotFound.
-// Kept tiny so the check is cheap at render time.
 const KNOWN_PATHS = new Set(['/', '/index.html'])
 
 function isKnownPath(pathname) {
   if (!pathname) return true
   return KNOWN_PATHS.has(pathname)
 }
-
-// Each tab gets its own accent — the navbar echoes it as a tiny dot on inactive
-// tabs and as the active underline color, so every section has a micro-identity
-// that matches its vibe (orange = home/brand, blue = about, yellow = scrapbook,
-// green = projects, pink = experience, purple = WIE, peach = contact).
-const tabs = [
-  { id: 'home', label: 'Home', component: Hero, accent: '#E8521A' },
-  { id: 'about', label: 'About', component: About, accent: '#2A4BCC' },
-  { id: 'beyond', label: 'Beyond the Code', component: Beyond, accent: '#F0C93A' },
-  { id: 'projects', label: 'Projects', component: Projects, accent: '#1A6B45' },
-  { id: 'experience', label: 'Experience', component: Experience, accent: '#F15BB5' },
-  { id: 'wie', label: 'WIE', component: WIE, accent: '#9B5DE5' },
-  { id: 'contact', label: 'Contact', component: Contact, accent: '#F7A68A' },
-]
 
 function App() {
   const [activeTab, setActiveTab] = useState('home')
@@ -50,8 +29,6 @@ function App() {
     if (root) root.scrollTop = 0
   }, [activeTab, notFound])
 
-  // Global navigate bus — lets the command palette and any deep-link trigger
-  // a tab switch without prop-drilling.
   useEffect(() => {
     const onNavigate = (e) => {
       const next = e?.detail
@@ -65,7 +42,6 @@ function App() {
     return () => window.removeEventListener('portfolio:navigate', onNavigate)
   }, [])
 
-  // Keep the 404 state in sync with browser back/forward navigation.
   useEffect(() => {
     const onPop = () => setNotFound(!isKnownPath(window.location.pathname))
     window.addEventListener('popstate', onPop)
@@ -87,13 +63,17 @@ function App() {
 
   return (
     <div className="flex h-svh flex-col overflow-hidden bg-bg text-ink">
-      <Navbar tabs={tabs} activeTab={notFound ? null : activeTab} onTabChange={(id) => {
-        setNotFound(false)
-        setActiveTab(id)
-        if (window.location.pathname !== '/') {
-          window.history.pushState({}, '', '/')
-        }
-      }} />
+      <Navbar
+        tabs={tabs}
+        activeTab={notFound ? null : activeTab}
+        onTabChange={(id) => {
+          setNotFound(false)
+          setActiveTab(id)
+          if (window.location.pathname !== '/') {
+            window.history.pushState({}, '', '/')
+          }
+        }}
+      />
       <main className="relative min-h-0 flex-1 overflow-hidden">
         <ScrollProvider activeTab={panelKey}>
           <AnimatePresence mode="wait" initial={false}>
@@ -104,7 +84,7 @@ function App() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.25, ease: 'easeOut', delay: 0.4 }}
-              className="absolute inset-0 overflow-y-auto"
+              className="absolute inset-0 overflow-y-auto pb-28 md:pb-24"
             >
               {notFound ? (
                 <Suspense fallback={null}>
@@ -118,7 +98,6 @@ function App() {
         </ScrollProvider>
       </main>
       <TabTransition activeTab={panelKey} accent={notFound ? 'var(--color-terracotta)' : activeAccent} />
-      {/* Sequential nav — hidden on 404 so it doesn't float over the error. */}
       {!notFound ? (
         <PageNav
           tabs={tabs}

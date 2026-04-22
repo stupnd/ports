@@ -80,6 +80,7 @@ function MetricPill({ metric, accent }) {
 export default function ProjectCaseStudy({ project, onBack }) {
   const { title, tagline, blurb, stack, github, live, accent: accentKey, caseStudy } = project
   const accent = ACCENTS[accentKey] || ACCENTS.terracotta
+  const isTechnical = caseStudy?.caseStudyVariant === 'technical'
 
   // Scroll to top of case study on open so the user sees the morph target.
   useEffect(() => {
@@ -192,10 +193,12 @@ export default function ProjectCaseStudy({ project, onBack }) {
         </motion.div>
       </div>
 
-      {/* Problem */}
+      {/* Problem / constraint */}
       {caseStudy?.problem ? (
         <section className="mx-auto max-w-6xl px-5 py-20 md:px-8 md:py-28">
-          <p className={`eyebrow ${accent.text}`}>The problem</p>
+          <p className={`eyebrow ${accent.text}`}>
+            {isTechnical ? 'Constraint' : 'The problem'}
+          </p>
           <motion.h3
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -220,8 +223,37 @@ export default function ProjectCaseStudy({ project, onBack }) {
         </section>
       ) : null}
 
-      {/* Decisions */}
-      {caseStudy?.decisions?.length ? (
+      {/* Bridge-style system notes (replaces the default “key decisions” grid) */}
+      {isTechnical && caseStudy?.systemNotes?.length ? (
+        <section className="mx-auto max-w-6xl px-5 py-20 md:px-8 md:py-28">
+          <p className={`eyebrow ${accent.text}`}>How it is wired</p>
+          <div className="mt-10 grid gap-6 md:grid-cols-3">
+            {caseStudy.systemNotes.map((d, i) => (
+              <motion.article
+                key={d.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.5, ease: 'easeOut', delay: i * 0.08 }}
+                className="relative rounded-xl bg-ink-card p-6 ring-1 ring-bg/10 md:p-7"
+              >
+                <span
+                  className="absolute inset-x-0 top-0 h-[2px] rounded-t-xl"
+                  style={{ backgroundColor: accent.hex }}
+                  aria-hidden
+                />
+                <h4 className="f-display text-lg font-bold leading-tight text-bg md:text-xl">
+                  {d.title}
+                </h4>
+                <p className="mt-3 text-[14.5px] leading-relaxed text-bg/75">{d.body}</p>
+              </motion.article>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {/* Decisions (default case studies only) */}
+      {!isTechnical && caseStudy?.decisions?.length ? (
         <section className="mx-auto max-w-6xl px-5 py-20 md:px-8 md:py-28">
           <p className={`eyebrow ${accent.text}`}>Key decisions</p>
           <div className="mt-10 grid gap-6 md:grid-cols-3">
@@ -253,7 +285,7 @@ export default function ProjectCaseStudy({ project, onBack }) {
       {caseStudy?.metrics?.length ? (
         <section className="bg-ink-card py-20 md:py-24">
           <div className="mx-auto max-w-6xl px-5 md:px-8">
-            <p className={`eyebrow ${accent.text}`}>Shipped</p>
+            <p className={`eyebrow ${accent.text}`}>{isTechnical ? 'Measured' : 'Shipped'}</p>
             <ul className="mt-8 grid gap-5 sm:grid-cols-2 md:grid-cols-3">
               {caseStudy.metrics.map((m) => (
                 <MetricPill key={m.label} metric={m} accent={accent} />
@@ -266,7 +298,9 @@ export default function ProjectCaseStudy({ project, onBack }) {
       {/* Lessons */}
       {caseStudy?.lessons ? (
         <section className="mx-auto max-w-4xl px-5 py-20 md:px-8 md:py-28">
-          <p className={`eyebrow ${accent.text}`}>Lessons</p>
+          <p className={`eyebrow ${accent.text}`}>
+            {isTechnical ? 'What I would tune next' : 'Lessons'}
+          </p>
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}

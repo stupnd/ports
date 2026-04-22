@@ -3,41 +3,34 @@ import { motion } from 'framer-motion'
 import { gsap, ScrollTrigger } from '../lib/scroll'
 import { prefersReducedMotion } from '../hooks/useReducedMotion'
 
-const PALETTE = {
-  bg: '#1A0A2E',
-  surface: '#2D1B4E',
-  accent: '#9B5DE5',
-  pink: '#F15BB5',
-  gold: '#F0C93A',
-  text: '#F8F4FF',
-  muted: '#B8A9D4',
-}
-
 const stats = [
-  { number: '600+', label: 'Students reached', color: PALETTE.gold, countTo: 600, suffix: '+' },
-  { number: '1st', label: 'WIEee Code', color: PALETTE.pink },
-  { number: 'Vice Chair', label: '2025–2026', color: PALETTE.accent },
-  { number: 'Chair', label: '2026–2027', color: PALETTE.pink },
+  { number: '600+', label: 'Students reached', colorClass: 'text-sun', countTo: 600, suffix: '+' },
+  { number: '1st', label: 'WIEee Code hackathon', colorClass: 'text-wie-pink' },
+  { number: 'Vice Chair', label: '2025–2026', colorClass: 'text-wie-accent' },
+  { number: 'Chair', label: '2026–2027', colorClass: 'text-wie-pink' },
 ]
 
 const initiatives = [
   {
     icon: '✦',
     title: 'WIEee Code',
-    line: 'Organized WIEee Code, a beginner-friendly one-day coding event featuring hands-on workshops in React, Git, and Docker. 100+ students. One chaotic, amazing day.',
-    accent: PALETTE.pink,
+    line: 'One-day beginner event with React, Git, and Docker workshops. 100+ students showed up.',
+    barClass: 'bg-wie-pink',
+    iconClass: 'text-wie-pink',
   },
   {
     icon: '◆',
     title: 'Technical Workshops',
-    line: 'Led hands-on workshops on Git, React, and Docker. Made them actually useful, not just slides.',
-    accent: PALETTE.accent,
+    line: 'Hands-on Git, React, and Docker sessions with live coding, not slide-only blocks.',
+    barClass: 'bg-wie-accent',
+    iconClass: 'text-wie-accent',
   },
   {
     icon: '★',
     title: 'Mentorship Program',
-    line: 'Paired upper-year students with first- and second-years navigating engineering. Real connections, not spreadsheets.',
-    accent: PALETTE.gold,
+    line: 'Matched upper-years with first- and second-years for one-on-one check-ins and study help.',
+    barClass: 'bg-sun',
+    iconClass: 'text-sun',
   },
 ]
 
@@ -54,16 +47,13 @@ function ClusterPolaroid({
 }) {
   return (
     <div
-      className="group absolute cursor-pointer bg-white transition-transform duration-200 ease-out hover:z-50"
+      className="group absolute cursor-pointer rounded bg-white shadow-[0_18px_40px_-12px_rgba(0,0,0,0.55),0_4px_16px_rgba(0,0,0,0.35)] transition-transform duration-200 ease-out hover:z-50"
       style={{
         top,
         left,
         width,
         zIndex,
         padding: '10px 10px 36px 10px',
-        borderRadius: '4px',
-        boxShadow:
-          '0 18px 40px -12px rgba(0,0,0,0.55), 0 4px 16px rgba(0,0,0,0.35)',
         transform: `rotate(${rotate}deg)`,
         transformOrigin: 'center',
       }}
@@ -79,12 +69,11 @@ function ClusterPolaroid({
         alt={alt}
         loading="lazy"
         decoding="async"
-        className="block w-full"
+        className="block w-full rounded-[2px]"
         style={{
           aspectRatio,
           objectFit: 'cover',
           objectPosition,
-          borderRadius: '2px',
         }}
       />
     </div>
@@ -168,23 +157,14 @@ function StatPill({ stat }) {
   }, [stat])
 
   return (
-    <li
-      className="inline-flex items-center gap-3 rounded-full px-5 py-2.5"
-      style={{
-        background: PALETTE.surface,
-        border: `1px solid ${PALETTE.accent}55`,
-      }}
-    >
+    <li className="inline-flex items-center gap-3 rounded-full border border-wie-accent/40 bg-wie-surface px-5 py-2.5">
       <span
         ref={numRef}
-        className="f-display text-lg font-bold tracking-tight tabular-nums"
-        style={{ color: stat.color }}
+        className={`f-display text-lg font-bold tracking-tight tabular-nums ${stat.colorClass}`}
       >
         {stat.countTo ? `0${stat.suffix || ''}` : stat.number}
       </span>
-      <span className="text-[13px] font-medium" style={{ color: PALETTE.muted }}>
-        {stat.label}
-      </span>
+      <span className="text-[13px] font-medium text-wie-muted">{stat.label}</span>
     </li>
   )
 }
@@ -196,43 +176,21 @@ function InitiativeCard({ item, index }) {
       whileInView={{ y: 0, opacity: 1 }}
       viewport={{ once: true, amount: 0.25 }}
       transition={{ duration: 0.55, ease: 'easeOut', delay: index * 0.08 }}
-      className="relative flex flex-col gap-3 overflow-hidden rounded-2xl p-7"
-      style={{
-        background: PALETTE.surface,
-        border: `1px solid ${PALETTE.accent}40`,
-      }}
+      className="relative flex flex-col gap-3 overflow-hidden rounded-2xl border border-wie-accent/35 bg-wie-surface p-7"
     >
-      <span
-        className="absolute inset-x-0 top-0 h-1"
-        style={{ background: item.accent }}
-        aria-hidden
-      />
-      <span
-        className="f-display text-2xl"
-        style={{ color: item.accent }}
-        aria-hidden
-      >
+      <span className={`absolute inset-x-0 top-0 h-1 ${item.barClass}`} aria-hidden />
+      <span className={`f-display text-2xl ${item.iconClass}`} aria-hidden>
         {item.icon}
       </span>
-      <h3
-        className="f-display text-xl font-bold tracking-tight"
-        style={{ color: PALETTE.text }}
-      >
-        {item.title}
-      </h3>
-      <p className="text-[15px] leading-relaxed" style={{ color: PALETTE.muted }}>
-        {item.line}
-      </p>
+      <h3 className="f-display text-xl font-bold tracking-tight text-wie-text">{item.title}</h3>
+      <p className="text-[15px] leading-relaxed text-wie-muted">{item.line}</p>
     </motion.article>
   )
 }
 
 function GalleryPhoto({ src, alt, minHeight = 280 }) {
   return (
-    <div
-      className="group overflow-hidden rounded-xl transition-all duration-300 ease-out"
-      style={{ border: `1px solid ${PALETTE.accent}33`, marginBottom: 20 }}
-    >
+    <div className="group mb-5 overflow-hidden rounded-xl border border-wie-accent/25 transition-all duration-300 ease-out">
       <img
         src={src}
         alt={alt}
@@ -250,13 +208,11 @@ function GalleryPhoto({ src, alt, minHeight = 280 }) {
   )
 }
 
-export default function WIE() {
+export default function WIE({ embedded = false }) {
   return (
     <section
-      className="min-h-full"
-      style={{ background: PALETTE.bg, color: PALETTE.text }}
+      className={`${embedded ? 'min-h-0' : 'min-h-full'} bg-wie-bg text-wie-text`}
     >
-      {/* Hero */}
       <div className="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
         <div className="grid gap-14 md:grid-cols-[1.05fr_1fr] md:items-start md:gap-16">
           <motion.div
@@ -264,28 +220,17 @@ export default function WIE() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, ease: 'easeOut' }}
           >
-            <p
-              className="eyebrow"
-              style={{ color: PALETTE.accent, letterSpacing: '0.18em' }}
-            >
+            <p className="eyebrow tracking-[0.18em] text-wie-accent">
               IEEE Women in Engineering · uOttawa
             </p>
-            <h1
-              className="f-serif mt-8 text-[clamp(36px,5.5vw,68px)] font-bold leading-[1.1] tracking-tight"
-              style={{ color: PALETTE.text }}
-            >
+            <h1 className="f-serif mt-8 text-[clamp(36px,5.5vw,68px)] font-bold leading-[1.1] tracking-tight">
               Building community, one{' '}
-              <span style={{ color: PALETTE.accent }}>workshop</span> at a time.
+              <span className="text-wie-accent">workshop</span> at a time.
             </h1>
-            <p
-              className="mt-8 max-w-xl text-[16px] leading-[1.75]"
-              style={{ color: PALETTE.muted }}
-            >
-              I served as Vice Chair (2024–25) and Chair (2025–26) of IEEE WIE at
-              the University of Ottawa — one of the most active student branches
-              on campus. We ran hackathons, technical workshops, mentorship
-              programs, and brought together 100+ students who just needed a room
-              where they belonged.
+            <p className="mt-8 max-w-xl text-[16px] leading-[1.75] text-wie-muted">
+              I served as Vice Chair (2024–25) and Chair (2025–26) of IEEE WIE at the University of
+              Ottawa, one of the busier IEEE student groups on campus. We ran hackathons, technical
+              workshops, mentorship nights, and events that routinely drew 100+ students.
             </p>
             <ul className="mt-10 flex flex-wrap gap-3">
               {stats.map((s) => (
@@ -305,15 +250,13 @@ export default function WIE() {
         </div>
       </div>
 
-      {/* What we built */}
       <div className="mx-auto max-w-6xl px-5 pb-8 md:px-8 md:pb-16">
         <motion.p
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.4 }}
           transition={{ duration: 0.5, ease: 'easeOut' }}
-          className="eyebrow"
-          style={{ color: PALETTE.accent, letterSpacing: '0.18em' }}
+          className="eyebrow tracking-[0.18em] text-wie-accent"
         >
           What we built
         </motion.p>
@@ -324,39 +267,27 @@ export default function WIE() {
         </div>
       </div>
 
-      {/* Closing quote — above gallery */}
       <div className="mx-auto max-w-4xl px-5 py-20 text-center md:px-8 md:py-28">
-        <div
-          className="h-px w-full"
-          style={{ background: `${PALETTE.accent}55` }}
-          aria-hidden
-        />
+        <div className="h-px w-full bg-wie-accent/40" aria-hidden />
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.5 }}
           transition={{ duration: 0.7, ease: 'easeOut' }}
-          className="f-serif my-12 text-[clamp(28px,3.6vw,48px)] font-bold leading-[1.25] tracking-tight"
-          style={{ color: PALETTE.text }}
+          className="f-serif my-12 text-[clamp(28px,3.6vw,48px)] font-bold leading-[1.25] tracking-tight text-wie-text"
         >
           Engineering is better when everyone has a seat at the table.
         </motion.p>
-        <div
-          className="mt-10 h-px w-full"
-          style={{ background: `${PALETTE.accent}55` }}
-          aria-hidden
-        />
+        <div className="mt-10 h-px w-full bg-wie-accent/40" aria-hidden />
       </div>
 
-      {/* The moments */}
       <div className="mx-auto max-w-6xl px-5 pb-24 md:px-8 md:pb-32">
         <motion.p
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.4 }}
           transition={{ duration: 0.5, ease: 'easeOut' }}
-          className="eyebrow"
-          style={{ color: PALETTE.accent, letterSpacing: '0.18em' }}
+          className="eyebrow tracking-[0.18em] text-wie-accent"
         >
           The moments
         </motion.p>

@@ -16,7 +16,7 @@ export default function PageNav({ tabs, activeTab, onChange }) {
   const goNext = () => onChange(next.id)
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-4 z-30 flex justify-center px-5 md:bottom-6">
+    <div className="pointer-events-none fixed inset-x-0 bottom-20 z-30 flex justify-center px-5 md:bottom-6">
       <AnimatePresence mode="wait">
         <motion.div
           key={activeTab}
