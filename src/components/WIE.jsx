@@ -14,16 +14,17 @@ const PALETTE = {
 }
 
 const stats = [
-  { number: '100+', label: 'Students reached', color: PALETTE.gold, countTo: 100, suffix: '+' },
-  { number: '1st', label: 'Inaugural Hackathon', color: PALETTE.pink },
-  { number: 'VC → Chair', label: 'Two-year tenure', color: PALETTE.accent },
+  { number: '600+', label: 'Students reached', color: PALETTE.gold, countTo: 600, suffix: '+' },
+  { number: '1st', label: 'WIEee Code', color: PALETTE.pink },
+  { number: 'Vice Chair', label: '2025–2026', color: PALETTE.accent },
+  { number: 'Chair', label: '2026–2027', color: PALETTE.pink },
 ]
 
 const initiatives = [
   {
     icon: '✦',
-    title: 'Inaugural Hackathon',
-    line: 'Organized the first-ever WIE hackathon at uOttawa. 100+ students. One chaotic, amazing day.',
+    title: 'WIEee Code',
+    line: 'Organized WIEee Code, a beginner-friendly one-day coding event featuring hands-on workshops in React, Git, and Docker. 100+ students. One chaotic, amazing day.',
     accent: PALETTE.pink,
   },
   {
@@ -42,7 +43,6 @@ const initiatives = [
 
 function ClusterPolaroid({
   src,
-  caption,
   alt,
   top,
   left,
@@ -76,7 +76,7 @@ function ClusterPolaroid({
     >
       <img
         src={src}
-        alt={alt || caption}
+        alt={alt}
         loading="lazy"
         decoding="async"
         className="block w-full"
@@ -87,18 +87,6 @@ function ClusterPolaroid({
           borderRadius: '2px',
         }}
       />
-      <p
-        className="f-hand"
-        style={{
-          fontSize: '18px',
-          textAlign: 'center',
-          color: '#555550',
-          marginTop: '8px',
-          lineHeight: 1.1,
-        }}
-      >
-        {caption}
-      </p>
     </div>
   )
 }
@@ -108,7 +96,6 @@ function PhotoCluster() {
     <div className="relative hidden md:block" style={{ width: '420px', height: '520px' }}>
       <ClusterPolaroid
         src="/photos/wie/wie-photobooth-strip.JPG"
-        caption="wine & cheese 2025"
         alt="Wine & Cheese photobooth strip"
         top="0"
         left="0"
@@ -120,7 +107,6 @@ function PhotoCluster() {
       />
       <ClusterPolaroid
         src="/photos/wie/wie-team-stage.JPG"
-        caption="the team"
         alt="WIE team on stage"
         top="60px"
         left="180px"
@@ -130,7 +116,6 @@ function PhotoCluster() {
       />
       <ClusterPolaroid
         src="/photos/wie/wie-welcome-full.JPG"
-        caption="welcome night"
         alt="WIE welcome night 2024"
         top="260px"
         left="20px"
@@ -140,7 +125,6 @@ function PhotoCluster() {
       />
       <ClusterPolaroid
         src="/photos/wie/wie-gala-group.JPG"
-        caption="gala 2025"
         alt="WIE gala 2025"
         top="300px"
         left="210px"
@@ -243,34 +227,26 @@ function InitiativeCard({ item, index }) {
   )
 }
 
-function GalleryPhoto({ src, caption, alt, minHeight = 280 }) {
+function GalleryPhoto({ src, alt, minHeight = 280 }) {
   return (
-    <figure className="group overflow-hidden" style={{ marginBottom: 20 }}>
-      <div
-        className="overflow-hidden rounded-xl transition-all duration-300 ease-out"
-        style={{ border: `1px solid ${PALETTE.accent}33` }}
-      >
-        <img
-          src={src}
-          alt={alt || caption}
-          loading="lazy"
-          decoding="async"
-          className="block w-full transition-transform duration-500 ease-out group-hover:scale-[1.03]"
-          style={{
-            minHeight,
-            height: minHeight,
-            objectFit: 'cover',
-            objectPosition: 'center top',
-          }}
-        />
-      </div>
-      <figcaption
-        className="f-hand mt-3 text-center text-lg"
-        style={{ color: PALETTE.muted, lineHeight: 1.1 }}
-      >
-        {caption}
-      </figcaption>
-    </figure>
+    <div
+      className="group overflow-hidden rounded-xl transition-all duration-300 ease-out"
+      style={{ border: `1px solid ${PALETTE.accent}33`, marginBottom: 20 }}
+    >
+      <img
+        src={src}
+        alt={alt}
+        loading="lazy"
+        decoding="async"
+        className="block w-full transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+        style={{
+          minHeight,
+          height: minHeight,
+          objectFit: 'cover',
+          objectPosition: 'center top',
+        }}
+      />
+    </div>
   )
 }
 
@@ -400,13 +376,11 @@ export default function WIE() {
           >
             <GalleryPhoto
               src="/photos/wie/wie-team-stage.JPG"
-              caption="wine & cheese 2025"
               alt="WIE team on stage at Wine & Cheese"
               minHeight={520}
             />
             <GalleryPhoto
               src="/photos/wie/wie-welcome-full.JPG"
-              caption="welcome night 2024"
               alt="WIE welcome night with balloons"
               minHeight={320}
             />
@@ -420,19 +394,16 @@ export default function WIE() {
           >
             <GalleryPhoto
               src="/photos/wie/wie-welcome-group.JPG"
-              caption="welcome night"
               alt="WIE welcome night group"
               minHeight={280}
             />
             <GalleryPhoto
               src="/photos/wie/wie-dinner-table.JPG"
-              caption="after the hackathon"
               alt="Dinner after the hackathon"
               minHeight={280}
             />
             <GalleryPhoto
               src="/photos/wie/wie-gala-group.JPG"
-              caption="gala 2025"
               alt="WIE gala 2025"
               minHeight={280}
             />
@@ -446,13 +417,11 @@ export default function WIE() {
           >
             <GalleryPhoto
               src="/photos/wie/wie-photobooth-friends.JPG"
-              caption="wie gala"
               alt="Four friends at gold curtain photobooth"
               minHeight={300}
             />
             <GalleryPhoto
               src="/photos/wie/wie-big-group-gala.JPG"
-              caption="the whole crew"
               alt="WIE gala large group shot"
               minHeight={300}
             />
