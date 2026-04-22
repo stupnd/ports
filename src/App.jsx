@@ -11,6 +11,7 @@ import Contact from './components/Contact'
 import ScrollProvider from './components/ScrollProvider'
 import Cursor from './components/Cursor'
 import TabTransition from './components/TabTransition'
+import PageNav from './components/PageNav'
 
 const CommandPalette = lazy(() => import('./components/CommandPalette'))
 const NotFound = lazy(() => import('./components/NotFound'))
@@ -117,6 +118,19 @@ function App() {
         </ScrollProvider>
       </main>
       <TabTransition activeTab={panelKey} accent={notFound ? 'var(--color-terracotta)' : activeAccent} />
+      {/* Sequential nav — hidden on 404 so it doesn't float over the error. */}
+      {!notFound ? (
+        <PageNav
+          tabs={tabs}
+          activeTab={activeTab}
+          onChange={(id) => {
+            setActiveTab(id)
+            if (window.location.pathname !== '/') {
+              window.history.pushState({}, '', '/')
+            }
+          }}
+        />
+      ) : null}
       <Cursor accent={notFound ? 'var(--color-terracotta)' : activeAccent} />
       <Suspense fallback={null}>
         <CommandPalette />

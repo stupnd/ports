@@ -26,17 +26,27 @@ export default function MarqueeTicker({
   const isLight = tone === 'light'
   const isReverse = direction === 'right'
 
-  // Light tone uses a fully transparent surface so the orbs behind can
-  // show through. Edge fades use the hero's bg so text disappears against
-  // the same color as the section.
+  // Light tone uses a fully transparent surface so the orbs/blobs behind can
+  // show through. Instead of painting cream fade strips (which covered those
+  // backgrounds), light tone uses a CSS mask so the marquee itself fades to
+  // transparent at the edges. Dark tone keeps the traditional ink gradient
+  // since there's no background element to protect.
   const surface = isLight ? 'bg-transparent' : 'bg-ink'
   const textColor = isLight ? 'text-ink/70' : 'text-bg'
-  const fadeFrom = isLight ? 'from-bg' : 'from-ink'
+  const maskStyle = isLight
+    ? {
+        WebkitMaskImage:
+          'linear-gradient(to right, transparent 0, #000 64px, #000 calc(100% - 64px), transparent 100%)',
+        maskImage:
+          'linear-gradient(to right, transparent 0, #000 64px, #000 calc(100% - 64px), transparent 100%)',
+      }
+    : undefined
 
   return (
     <div
       className={`relative w-full overflow-hidden py-3 ${surface} ${className}`}
       aria-label="About at a glance"
+      style={maskStyle}
     >
       <div
         className={`marquee-track flex w-max whitespace-nowrap${
@@ -54,12 +64,16 @@ export default function MarqueeTicker({
         ))}
       </div>
 
-      <div
-        className={`pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r ${fadeFrom} to-transparent`}
-      />
-      <div
-        className={`pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l ${fadeFrom} to-transparent`}
-      />
+      {!isLight ? (
+        <>
+          <div
+            className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-ink to-transparent"
+          />
+          <div
+            className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-ink to-transparent"
+          />
+        </>
+      ) : null}
     </div>
   )
 }
