@@ -17,18 +17,6 @@ const fadeUp = (delay = 0) => ({
 
 const interests = [
   {
-    icon: '📚',
-    name: 'Reading',
-    line: 'Mostly fiction lately. Send recs.',
-    tone: 'terracotta',
-  },
-  {
-    icon: '🎬',
-    name: 'Sitcoms',
-    line: 'Same few shows on repeat. No shame.',
-    tone: 'cobalt',
-  },
-  {
     icon: '🍜',
     name: 'Trying New Food',
     line: 'I will walk far for a good bowl of noodles.',
@@ -54,7 +42,7 @@ const PILL_TONES = {
 const polaroids = [
   { src: '/photos/beyond/kayaks.JPG', caption: 'somewhere', rotation: 1 },
   { src: '/photos/beyond/pizza.JPG', caption: 'food > everything', rotation: -1.5 },
-  { src: '/photos/beyond/flamingos.JPG', caption: 'ottawa zoo', rotation: 1.5 },
+  { src: '/photos/beyond/flamingos.JPG', caption: 'calgary zoo', rotation: 1.5 },
   { src: '/photos/beyond/friends.JPG', caption: 'us :)', rotation: -1 },
   { src: '/photos/beyond/digicam.JPG', caption: 'digicam dump', rotation: 0.5 },
   { src: '/photos/beyond/lil-bytes.JPG', caption: 'lil bytes', rotation: -2 },
@@ -350,7 +338,7 @@ export default function BeyondPhotos() {
             <p className="eyebrow text-bg/50">A few favorite things</p>
             <HandArrow className="h-4 w-8 text-bg/35" strokeWidth={1.5} />
           </div>
-          <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 md:mt-6 md:grid-cols-4 md:gap-5">
+          <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 md:mt-6 md:max-w-3xl md:grid-cols-2 md:gap-5">
             {interests.map((item, i) => (
               <InterestCard key={item.name} item={item} index={i} />
             ))}
