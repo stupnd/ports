@@ -106,7 +106,26 @@ function resolveCollision(a, b) {
 }
 
 export default function PhysicsOrbs({ containerRef, onFirstDrag }) {
-  const orbStates = useRef([])
+  // Lazy-initialize orb states on first render so ref callbacks (which fire
+  // during commit, BEFORE useEffect) can attach DOM elements directly. Without
+  // this, in production (no StrictMode double-mount) orbs never get wired up
+  // to the simulation and stay invisible off-screen.
+  const orbStates = useRef(null)
+  if (orbStates.current === null) {
+    orbStates.current = ORBS.map((orb) => ({
+      id: orb.id,
+      r: orb.r,
+      m: orb.mass,
+      x: 0,
+      y: 0,
+      vx: 0,
+      vy: 0,
+      dragging: false,
+      el: null,
+      visible: false,
+      seeded: false,
+    }))
+  }
   const dragRef = useRef(null)
   const onFirstDragRef = useRef(onFirstDrag)
   onFirstDragRef.current = onFirstDrag
@@ -124,27 +143,21 @@ export default function PhysicsOrbs({ containerRef, onFirstDrag }) {
     measure()
 
     const isMobile = window.matchMedia('(max-width: 767px)').matches
-    // Seed orb states (positions from the container size). If orbStates is
-    // already populated (e.g. on container resize) we keep current velocities
-    // and just clamp positions back inside the new bounds.
     const { width, height } = rectRef.current
-    if (orbStates.current.length === 0) {
-      orbStates.current = ORBS.map((orb) => ({
-        id: orb.id,
-        r: isMobile ? orb.rMobile : orb.r,
-        m: orb.mass,
-        x: orb.xPct * width,
-        y: orb.yPct * height,
-        vx: 0,
-        vy: 0,
-        dragging: false,
-        el: orbStates.current.find?.((s) => s?.id === orb.id)?.el || null,
-      }))
-    } else {
-      // Container resized — clamp positions
-      for (const o of orbStates.current) {
-        o.x = Math.min(Math.max(o.r, o.x), width - o.r)
-        o.y = Math.min(Math.max(o.r, o.y), height - o.r)
+    // Seed real positions/radii now that we have a measured container. We
+    // preserve any refs + velocities already on the orb objects.
+    for (let i = 0; i < orbStates.current.length; i++) {
+      const orb = ORBS[i]
+      const state = orbStates.current[i]
+      if (!state.seeded) {
+        state.r = isMobile ? orb.rMobile : orb.r
+        state.x = orb.xPct * width
+        state.y = orb.yPct * height
+        state.seeded = true
+      } else {
+        // Container resized — clamp back into bounds
+        state.x = Math.min(Math.max(state.r, state.x), width - state.r)
+        state.y = Math.min(Math.max(state.r, state.y), height - state.r)
       }
     }
 
