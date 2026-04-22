@@ -43,11 +43,12 @@ const interests = [
   },
 ]
 
+/** Pills on dark (`bg-ink-card`) interest cards */
 const PILL_TONES = {
-  terracotta: 'bg-terracotta/10 text-terracotta ring-terracotta/20',
-  cobalt: 'bg-cobalt/10 text-cobalt ring-cobalt/20',
-  sun: 'bg-sun/25 text-ink/80 ring-sun/40',
-  forest: 'bg-forest/10 text-forest ring-forest/25',
+  terracotta: 'bg-terracotta/15 text-terracotta ring-terracotta/35',
+  cobalt: 'bg-cobalt/15 text-cobalt ring-cobalt/35',
+  sun: 'bg-sun/22 text-bg/90 ring-sun/45',
+  forest: 'bg-forest/15 text-forest ring-forest/35',
 }
 
 const polaroids = [
@@ -85,7 +86,7 @@ function InterestCard({ item, index }) {
       variants={fadeUp(index * 0.08)}
       whileHover={{ y: -3 }}
       transition={{ duration: 0.2, ease: 'easeOut' }}
-      className="relative flex flex-col justify-between rounded-xl bg-card p-5 shadow-[0_1px_0_rgba(17,17,17,0.04)] transition-shadow duration-200 hover:shadow-[0_14px_32px_-18px_rgba(17,17,17,0.25)] md:p-6"
+      className="relative flex flex-col justify-between rounded-xl bg-ink-card p-5 shadow-[0_1px_0_rgba(255,255,255,0.05)] ring-1 ring-bg/10 transition-shadow duration-200 hover:shadow-[0_18px_40px_-20px_rgba(0,0,0,0.55)] md:p-6"
     >
       <span
         className={`absolute right-4 top-4 rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] ring-1 ${PILL_TONES[item.tone]}`}
@@ -106,10 +107,10 @@ function InterestCard({ item, index }) {
       </div>
 
       <div className="mt-3">
-        <p className="f-display text-lg font-bold leading-tight text-ink md:text-xl">
+        <p className="f-display text-lg font-bold leading-tight text-bg md:text-xl">
           {item.name}
         </p>
-        <p className="mt-1.5 text-[13px] leading-snug text-muted md:text-sm">{item.line}</p>
+        <p className="mt-1.5 text-[13px] leading-snug text-bg/60 md:text-sm">{item.line}</p>
       </div>
     </motion.div>
   )
@@ -132,7 +133,7 @@ function MosaicTile({ poly, index, onOpen }) {
         ease: [0.22, 1, 0.36, 1],
         delay: 0.05 + (index % 6) * 0.04,
       }}
-      className="mb-4 block w-full cursor-pointer rounded-[3px] bg-white p-[8px] shadow-[0_4px_14px_rgba(17,17,17,0.1)] transition-shadow duration-200 hover:shadow-[0_18px_34px_-16px_rgba(17,17,17,0.28)] focus:outline-none focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:ring-offset-2 focus-visible:ring-offset-sand md:mb-5 md:p-[10px]"
+      className="mb-4 block w-full cursor-pointer rounded-[3px] bg-white/95 p-[8px] shadow-[0_6px_20px_rgba(0,0,0,0.35)] ring-1 ring-bg/10 transition-shadow duration-200 hover:shadow-[0_20px_40px_-14px_rgba(0,0,0,0.55)] focus:outline-none focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:ring-offset-2 focus-visible:ring-offset-ink md:mb-5 md:p-[10px]"
       style={{ breakInside: 'avoid' }}
       aria-label={`Open photo: ${poly.alt}`}
     >
@@ -164,7 +165,7 @@ function PolaroidTile({ poly, index, onOpen }) {
         ease: [0.22, 1, 0.36, 1],
         delay: 0.15 + index * 0.06,
       }}
-      className="block w-full cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:ring-offset-2 focus-visible:ring-offset-sand"
+      className="block w-full cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:ring-offset-2 focus-visible:ring-offset-ink"
       aria-label={`Open ${poly.caption} larger`}
     >
       <Polaroid
@@ -292,7 +293,7 @@ export default function BeyondPhotos() {
   const [openPoly, setOpenPoly] = useState(null)
 
   return (
-    <section id="beyond-photos" className="border-t border-ink/10 bg-sand">
+    <section id="beyond-photos" className="bg-ink text-bg">
       <div className="mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-20">
         <motion.p
           initial="hidden"
@@ -309,7 +310,7 @@ export default function BeyondPhotos() {
           whileInView="show"
           viewport={viewOnce}
           variants={fadeUp(0.05)}
-          className="f-serif mt-8 max-w-4xl text-[clamp(36px,5vw,72px)] font-bold leading-[1.2] tracking-tight text-ink"
+          className="f-serif mt-8 max-w-4xl text-[clamp(36px,5vw,72px)] font-bold leading-[1.2] tracking-tight text-bg"
         >
           Engineer by degree. Reader,{' '}
           <span className="relative inline-block">
@@ -329,7 +330,7 @@ export default function BeyondPhotos() {
           whileInView="show"
           viewport={viewOnce}
           variants={fadeUp(0.1)}
-          className="mt-10 max-w-2xl text-base leading-[1.75] text-ink/85 md:text-[17px]"
+          className="mt-10 max-w-2xl text-base leading-[1.75] text-bg/80 md:text-[17px]"
         >
           The camera roll lives here: polaroids from trips and nights out, then a looser mosaic of
           digicam frames. Tap anything to open it larger.
@@ -346,8 +347,8 @@ export default function BeyondPhotos() {
           className="mt-16 md:mt-20"
         >
           <div className="flex items-baseline gap-3">
-            <p className="eyebrow text-muted">A few favorite things</p>
-            <HandArrow className="h-4 w-8 text-muted/40" strokeWidth={1.5} />
+            <p className="eyebrow text-bg/50">A few favorite things</p>
+            <HandArrow className="h-4 w-8 text-bg/35" strokeWidth={1.5} />
           </div>
           <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 md:mt-6 md:grid-cols-4 md:gap-5">
             {interests.map((item, i) => (
@@ -358,8 +359,8 @@ export default function BeyondPhotos() {
 
         <div className="mt-14 md:mt-16">
           <div className="flex items-baseline justify-between gap-4">
-            <p className="eyebrow text-muted">From the camera roll</p>
-            <p className="text-[11px] italic text-muted/70">tap a polaroid →</p>
+            <p className="eyebrow text-bg/50">From the camera roll</p>
+            <p className="text-[11px] italic text-bg/45">tap a polaroid →</p>
           </div>
           <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-3 md:mt-6 md:grid-cols-6 md:gap-5">
             {polaroids.map((p, i) => (
@@ -376,8 +377,8 @@ export default function BeyondPhotos() {
         <div className="relative mt-14 md:mt-16">
           <div className="flex items-end justify-between gap-4">
             <div>
-              <p className="eyebrow text-muted">More from the roll</p>
-              <p className="f-hand mt-2 text-[26px] leading-[1.1] text-ink/80 md:text-[32px]">
+              <p className="eyebrow text-bg/50">More from the roll</p>
+              <p className="f-hand mt-2 text-[26px] leading-[1.1] text-bg/85 md:text-[32px]">
                 a scrapbook, basically.
               </p>
             </div>
@@ -406,10 +407,10 @@ export default function BeyondPhotos() {
           transition={{ duration: 0.6, ease: 'easeOut' }}
           className="mt-20 flex flex-col items-start gap-4 md:mt-24"
         >
-          <p className="f-hand text-[22px] leading-[1.3] text-ink/80 md:text-[24px]">
+          <p className="f-hand text-[22px] leading-[1.3] text-bg/85 md:text-[24px]">
             Thanks for scrolling this far.
           </p>
-          <p className="f-hand max-w-md text-[17px] leading-[1.4] text-muted md:text-[18px]">
+          <p className="f-hand max-w-md text-[17px] leading-[1.4] text-bg/55 md:text-[18px]">
             Glad you are here.
           </p>
           <Signature className="-ml-1 mt-2 h-20 w-[260px] text-terracotta md:h-24 md:w-[300px]" />

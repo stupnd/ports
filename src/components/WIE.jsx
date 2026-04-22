@@ -30,7 +30,7 @@ const initiatives = [
     title: 'Mentorship Program',
     line: 'Matched upper-years with first- and second-years for one-on-one check-ins and study help.',
     barClass: 'bg-sun',
-    iconClass: 'text-amber-800',
+    iconClass: 'text-sun',
   },
 ]
 
@@ -157,14 +157,14 @@ function StatPill({ stat }) {
   }, [stat])
 
   return (
-    <li className="inline-flex items-center gap-3 rounded-full border border-wie-accent/50 bg-card px-5 py-2.5 shadow-sm shadow-wie-accent/10 ring-1 ring-wie-accent/15">
+    <li className="inline-flex items-center gap-3 rounded-full border border-wie-accent/40 bg-wie-surface px-5 py-2.5">
       <span
         ref={numRef}
         className={`f-display text-lg font-bold tracking-tight tabular-nums ${stat.colorClass}`}
       >
         {stat.countTo ? `0${stat.suffix || ''}` : stat.number}
       </span>
-      <span className="text-[13px] font-semibold text-ink/80">{stat.label}</span>
+      <span className="text-[13px] font-medium text-wie-muted">{stat.label}</span>
     </li>
   )
 }
@@ -176,21 +176,21 @@ function InitiativeCard({ item, index }) {
       whileInView={{ y: 0, opacity: 1 }}
       viewport={{ once: true, amount: 0.25 }}
       transition={{ duration: 0.55, ease: 'easeOut', delay: index * 0.08 }}
-      className="relative flex flex-col gap-3 overflow-hidden rounded-2xl border border-wie-accent/45 bg-gradient-to-b from-[#f7f2ff] to-card p-7 shadow-md shadow-wie-accent/10 ring-1 ring-wie-accent/20"
+      className="relative flex flex-col gap-3 overflow-hidden rounded-2xl border border-wie-accent/35 bg-wie-surface p-7"
     >
-      <span className={`absolute inset-x-0 top-0 h-1.5 ${item.barClass}`} aria-hidden />
+      <span className={`absolute inset-x-0 top-0 h-1 ${item.barClass}`} aria-hidden />
       <span className={`f-display text-2xl ${item.iconClass}`} aria-hidden>
         {item.icon}
       </span>
-      <h3 className="f-display text-xl font-bold tracking-tight text-ink">{item.title}</h3>
-      <p className="text-[15px] font-medium leading-relaxed text-ink/80">{item.line}</p>
+      <h3 className="f-display text-xl font-bold tracking-tight text-wie-text">{item.title}</h3>
+      <p className="text-[15px] leading-relaxed text-wie-muted">{item.line}</p>
     </motion.article>
   )
 }
 
 function GalleryPhoto({ src, alt, minHeight = 280 }) {
   return (
-    <div className="group mb-5 overflow-hidden rounded-xl border border-wie-accent/30 shadow-sm ring-1 ring-wie-accent/15 transition-all duration-300 ease-out hover:border-wie-accent/45 hover:ring-wie-accent/25">
+    <div className="group mb-5 overflow-hidden rounded-xl border border-wie-accent/25 transition-all duration-300 ease-out">
       <img
         src={src}
         alt={alt}
@@ -210,7 +210,7 @@ function GalleryPhoto({ src, alt, minHeight = 280 }) {
 
 export default function WIE() {
   return (
-    <section className="min-h-full bg-bg text-ink">
+    <section className="min-h-full bg-wie-bg text-wie-text">
       <div className="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
         <div className="grid gap-14 md:grid-cols-[1.05fr_1fr] md:items-start md:gap-16">
           <motion.div
@@ -218,14 +218,14 @@ export default function WIE() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, ease: 'easeOut' }}
           >
-            <p className="eyebrow font-semibold tracking-[0.18em] text-wie-accent">
+            <p className="eyebrow tracking-[0.18em] text-wie-accent">
               IEEE Women in Engineering · uOttawa
             </p>
-            <h1 className="f-serif mt-8 text-[clamp(36px,5.5vw,68px)] font-bold leading-[1.1] tracking-tight text-ink">
+            <h1 className="f-serif mt-8 text-[clamp(36px,5.5vw,68px)] font-bold leading-[1.1] tracking-tight">
               Building community, one{' '}
-              <span className="font-extrabold text-wie-accent">workshop</span> at a time.
+              <span className="text-wie-accent">workshop</span> at a time.
             </h1>
-            <p className="mt-8 max-w-xl text-[16px] font-medium leading-[1.75] text-ink/80">
+            <p className="mt-8 max-w-xl text-[16px] leading-[1.75] text-wie-muted">
               I served as Vice Chair (2024–25) and Chair (2025–26) of IEEE WIE at the University of
               Ottawa, one of the busier IEEE student groups on campus. We ran hackathons, technical
               workshops, mentorship nights, and events that routinely drew 100+ students.
@@ -254,7 +254,7 @@ export default function WIE() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.4 }}
           transition={{ duration: 0.5, ease: 'easeOut' }}
-          className="eyebrow font-semibold tracking-[0.18em] text-wie-accent"
+          className="eyebrow tracking-[0.18em] text-wie-accent"
         >
           What we built
         </motion.p>
@@ -266,17 +266,17 @@ export default function WIE() {
       </div>
 
       <div className="mx-auto max-w-4xl px-5 py-20 text-center md:px-8 md:py-28">
-        <div className="h-px w-full bg-wie-accent/50" aria-hidden />
+        <div className="h-px w-full bg-wie-accent/40" aria-hidden />
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.5 }}
           transition={{ duration: 0.7, ease: 'easeOut' }}
-          className="f-serif my-12 text-[clamp(28px,3.6vw,48px)] font-bold leading-[1.25] tracking-tight text-ink"
+          className="f-serif my-12 text-[clamp(28px,3.6vw,48px)] font-bold leading-[1.25] tracking-tight text-wie-text"
         >
           Engineering is better when everyone has a seat at the table.
         </motion.p>
-        <div className="mt-10 h-px w-full bg-wie-accent/50" aria-hidden />
+        <div className="mt-10 h-px w-full bg-wie-accent/40" aria-hidden />
       </div>
 
       <div className="mx-auto max-w-6xl px-5 pb-24 md:px-8 md:pb-32">
@@ -285,7 +285,7 @@ export default function WIE() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.4 }}
           transition={{ duration: 0.5, ease: 'easeOut' }}
-          className="eyebrow font-semibold tracking-[0.18em] text-wie-accent"
+          className="eyebrow tracking-[0.18em] text-wie-accent"
         >
           The moments
         </motion.p>

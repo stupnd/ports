@@ -95,7 +95,6 @@ export default function Hero() {
   const reduced = useReducedMotion()
   const sectionRef = useRef(null)
   const nameBubbleRef = useRef(null)
-  const [hintHidden, setHintHidden] = useState(false)
   const [isMobile, setIsMobile] = useState(() => {
     if (typeof window === 'undefined' || !window.matchMedia) return false
     return window.matchMedia('(max-width: 767px)').matches
@@ -147,11 +146,7 @@ export default function Hero() {
       {isMobile ? (
         <HeroDoodles />
       ) : (
-        <PhysicsOrbs
-          containerRef={sectionRef}
-          obstacleRef={nameBubbleRef}
-          onFirstDrag={() => setHintHidden(true)}
-        />
+        <PhysicsOrbs containerRef={sectionRef} obstacleRef={nameBubbleRef} />
       )}
 
       <div className="pointer-events-none relative flex flex-1 items-center md:block md:flex-none">
@@ -254,17 +249,6 @@ export default function Hero() {
               </motion.div>
             </>
           ) : null}
-
-          <motion.p
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: hintHidden || reduced ? 0 : 0.7, y: 0 }}
-            transition={{ duration: 0.5, ease: 'easeOut', delay: 1.8 }}
-            className="pointer-events-none mt-8 hidden items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted md:flex"
-            aria-hidden
-          >
-            <span className="inline-block h-px w-6 bg-muted/50" />
-            drag the spheres · they bounce
-          </motion.p>
         </motion.div>
       </div>
 

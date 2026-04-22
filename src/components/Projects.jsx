@@ -229,7 +229,7 @@ export default function Projects() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.25, ease: 'easeOut' }}
-          className="min-h-full bg-bg text-ink"
+          className="min-h-full bg-ink text-bg"
         >
           <div className="mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-20">
             <motion.p
@@ -247,7 +247,7 @@ export default function Projects() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.4 }}
               transition={{ duration: 0.6, ease: 'easeOut', delay: 0.05 }}
-              className="f-serif mt-6 max-w-3xl text-[clamp(36px,5vw,72px)] font-bold leading-[1.15] tracking-tight text-ink"
+              className="f-serif mt-6 max-w-3xl text-[clamp(36px,5vw,72px)] font-bold leading-[1.15] tracking-tight text-bg"
             >
               Selected{' '}
               <span className="relative inline-block">
@@ -256,7 +256,7 @@ export default function Projects() {
               </span>
             </motion.h2>
 
-            <p className="mt-5 max-w-xl text-sm text-muted md:text-[15px]">
+            <p className="mt-5 max-w-xl text-sm text-bg/60 md:text-[15px]">
               Open a card for context, tradeoffs, and numbers. GitHub and demos are linked on each
               tile.
             </p>

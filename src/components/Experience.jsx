@@ -67,18 +67,12 @@ const ACCENT_TEXT = {
   sun: 'text-ink',
 }
 
-const ACCENT_RING = {
-  cobalt: 'ring-cobalt/30',
-  terracotta: 'ring-terracotta/30',
-  forest: 'ring-forest/30',
-  sun: 'ring-sun/60',
-}
-
-const ACCENT_BG_SOFT = {
-  cobalt: 'bg-cobalt/5',
-  terracotta: 'bg-terracotta/5',
-  forest: 'bg-forest/5',
-  sun: 'bg-sun/15',
+/** Warm panel + strong left edge (reads like a margin note, not a generic card) */
+const SHIPPED_PANEL = {
+  cobalt: 'border-l-[5px] border-cobalt bg-[#f4f6fd] shadow-[inset_0_1px_0_rgba(255,255,255,0.65)]',
+  terracotta: 'border-l-[5px] border-terracotta bg-[#fff8f3] shadow-[inset_0_1px_0_rgba(255,255,255,0.65)]',
+  forest: 'border-l-[5px] border-forest bg-[#f2faf5] shadow-[inset_0_1px_0_rgba(255,255,255,0.65)]',
+  sun: 'border-l-[5px] border-sun bg-[#fffbeb] shadow-[inset_0_1px_0_rgba(255,255,255,0.65)]',
 }
 
 const stats = [
@@ -170,83 +164,101 @@ export default function Experience() {
   }, [])
 
   return (
-    <section className="min-h-full bg-bg">
-      <div className="mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-20">
-        {/* Header */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.4 }}
-          transition={{ duration: 0.5, ease: 'easeOut' }}
-          className="eyebrow text-terracotta"
-        >
-          Experience
-        </motion.p>
+    <section className="relative min-h-full overflow-hidden bg-sand text-ink">
+      {/* Paper grain — breaks up flat fills without “hero gradient” cliché */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-[0.35]"
+        style={{
+          backgroundImage:
+            'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\' opacity=\'0.05\'/%3E%3C/svg%3E")',
+        }}
+      />
+      <div className="relative mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-20">
+        <div>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.4 }}
+            transition={{ duration: 0.5, ease: 'easeOut' }}
+            className="eyebrow text-terracotta"
+          >
+            Experience
+          </motion.p>
 
-        <motion.h2
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.4 }}
-          transition={{ duration: 0.6, ease: 'easeOut', delay: 0.05 }}
-          className="f-serif mt-6 max-w-3xl text-[clamp(36px,5vw,72px)] font-bold leading-[1.15] tracking-tight text-ink"
-        >
-          Where I&apos;ve{' '}
-          <span className="relative inline-block">
-            worked.
-            <Squiggle className="pointer-events-none absolute -bottom-1 left-0 w-full md:-bottom-2" />
-          </span>
-        </motion.h2>
+          <motion.h2
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.4 }}
+            transition={{ duration: 0.6, ease: 'easeOut', delay: 0.05 }}
+            className="f-serif mt-6 max-w-3xl text-[clamp(36px,5vw,72px)] font-bold leading-[1.15] tracking-tight text-ink"
+          >
+            Where I&apos;ve{' '}
+            <span className="relative inline-block">
+              worked.
+              <Squiggle className="pointer-events-none absolute -bottom-1 left-0 w-full md:-bottom-2" />
+            </span>
+          </motion.h2>
+        </div>
 
-        <motion.p
+        <motion.div
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.4 }}
           transition={{ duration: 0.55, ease: 'easeOut', delay: 0.12 }}
-          className="mt-6 max-w-2xl text-base leading-[1.7] text-muted md:text-[17px]"
+          className="mt-8 max-w-2xl border-l-4 border-terracotta/45 pl-5 md:mt-9 md:pl-6"
         >
-          Four co-op terms across two industries, plus one incoming role: federal Salesforce and
-          data work, Solace pub/sub support, then TrendAI in 2026.
-        </motion.p>
+          <p className="f-hand text-[1.35rem] leading-snug text-ink/75 md:text-[1.45rem]">
+            Government tooling, message brokers, then threat-detection ML.
+          </p>
+          <p className="mt-3 text-base leading-[1.75] text-muted md:text-[17px]">
+            Four co-op terms across two industries, plus one incoming role: Salesforce and data work
+            at NRC, pub/sub support at Solace, then TrendAI in 2026.
+          </p>
+        </motion.div>
 
-        {/* Stats strip */}
-        <motion.ul
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.3 }}
-          variants={{
-            hidden: {},
-            show: { transition: { staggerChildren: 0.08, delayChildren: 0.18 } },
-          }}
-          className="mt-12 grid grid-cols-3 gap-3 md:mt-14 md:gap-5"
-        >
-          {stats.map((s, i) => (
-            <motion.li
-              key={s.label}
-              variants={row(0)}
-              className="relative overflow-hidden rounded-2xl bg-card px-5 py-6 ring-1 ring-ink/10 md:px-6 md:py-7"
-            >
-              <span
-                aria-hidden
-                className={`absolute inset-x-0 top-0 h-[2px] ${
-                  i === 0 ? 'bg-forest' : i === 1 ? 'bg-terracotta' : 'bg-cobalt'
-                }`}
-              />
-              <p className="f-display text-4xl font-bold tracking-tight text-ink md:text-[3.25rem]">
-                <CountNumber value={s.n} />
-              </p>
-              <p className="mt-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted md:text-xs">
-                {s.label}
-              </p>
-            </motion.li>
-          ))}
-        </motion.ul>
+        {/* One “desk card” strip instead of three identical tiles */}
+        <div className="mt-12 md:mt-14">
+          <p className="eyebrow mb-3 text-muted">At a glance</p>
+          <motion.ul
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={{
+              hidden: {},
+              show: { transition: { staggerChildren: 0.08, delayChildren: 0.18 } },
+            }}
+            className="grid grid-cols-3 overflow-hidden rounded-2xl bg-bg shadow-[0_2px_0_rgba(17,17,17,0.04),0_12px_40px_-12px_rgba(17,17,17,0.08)] ring-1 ring-ink/10"
+          >
+            {stats.map((s, i) => (
+              <motion.li
+                key={s.label}
+                variants={row(0)}
+                className={`relative px-4 py-6 md:px-7 md:py-8 ${i > 0 ? 'border-l border-ink/10' : ''}`}
+              >
+                <span
+                  aria-hidden
+                  className={`absolute left-3 top-0 h-1 w-10 rounded-b-sm md:left-5 md:w-12 ${
+                    i === 0 ? 'bg-forest' : i === 1 ? 'bg-terracotta' : 'bg-cobalt'
+                  }`}
+                />
+                <p className="f-display pt-2 text-3xl font-bold tabular-nums tracking-tight text-ink md:text-[2.75rem]">
+                  <CountNumber value={s.n} />
+                </p>
+                <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted md:text-[11px]">
+                  {s.label}
+                </p>
+              </motion.li>
+            ))}
+          </motion.ul>
+        </div>
 
-        {/* Roles list */}
-        <ul ref={listRef} className="relative mt-16 md:mt-20">
+        {/* Roles: stacked papers + timeline rail */}
+        <ul ref={listRef} className="relative mt-14 md:mt-20">
           <span
             ref={railRef}
             aria-hidden
-            className="pointer-events-none absolute left-0 top-0 hidden h-full w-[2px] origin-top bg-ink/25 md:block"
+            className="pointer-events-none absolute left-[5px] top-2 hidden h-[calc(100%-0.5rem)] w-[2px] origin-top rounded-full bg-gradient-to-b from-terracotta/45 via-ink/18 to-ink/8 md:block"
           />
           {roles.map((r, i) => (
             <motion.li
@@ -255,23 +267,17 @@ export default function Experience() {
               initial="hidden"
               whileInView="show"
               viewport={{ once: true, amount: 0.25 }}
-              className="group relative border-b border-ink/10 py-10 md:py-12"
+              className="group relative mb-6 last:mb-0 md:mb-8"
             >
-              {/* Hover accent bar */}
               <span
-                className={`absolute inset-y-0 left-0 w-[3px] origin-top scale-y-0 transition-transform duration-200 ease-out group-hover:scale-y-100 ${ACCENT_BAR[r.accent]}`}
+                className={`absolute left-0 top-8 z-[1] hidden h-3 w-3 rounded-full ring-[3px] ring-sand ring-offset-0 md:block ${ACCENT_BAR[r.accent]}`}
                 aria-hidden
               />
 
-              <div className="md:pl-8">
-                {/* Top row: company + dates */}
+              <div className="rounded-2xl bg-bg p-6 shadow-[0_1px_0_rgba(17,17,17,0.05)] ring-1 ring-ink/[0.08] transition-shadow duration-200 group-hover:shadow-[0_10px_36px_-12px_rgba(17,17,17,0.12)] md:ml-7 md:p-8 md:pl-10">
                 <div className="flex flex-col gap-2 md:flex-row md:items-baseline md:justify-between">
                   <div className="flex flex-wrap items-center gap-3">
-                    <p className="f-display flex items-center gap-3 text-3xl font-bold tracking-tight text-ink md:text-5xl">
-                      <span
-                        className={`inline-block h-3 w-3 rounded-sm md:h-3.5 md:w-3.5 ${ACCENT_BAR[r.accent]}`}
-                        aria-hidden
-                      />
+                    <p className="f-display text-2xl font-bold tracking-tight text-ink md:text-4xl">
                       {r.company}
                     </p>
                     {r.incoming ? <IncomingBadge /> : null}
@@ -280,28 +286,30 @@ export default function Experience() {
                 </div>
 
                 {r.sub ? (
-                  <p className="mt-1 pl-6 text-sm text-muted md:pl-[26px]">{r.sub}</p>
+                  <p className="mt-1 text-sm text-muted md:text-[15px]">{r.sub}</p>
                 ) : null}
 
                 <p
-                  className={`mt-5 text-sm font-semibold md:text-base ${ACCENT_TEXT[r.accent]}`}
+                  className={`mt-4 text-sm font-semibold md:text-[15px] ${ACCENT_TEXT[r.accent]}`}
                 >
                   {r.title}
                 </p>
-                <p className="mt-3 max-w-3xl text-muted md:text-[1.02rem]">{r.line}</p>
+                <p className="mt-2 max-w-3xl text-[15px] leading-[1.65] text-ink/80 md:text-[1.02rem]">
+                  {r.line}
+                </p>
 
-                {/* Shipped / Excited-about bullets */}
                 {r.shipped?.length ? (
-                  <div
-                    className={`mt-6 rounded-xl px-5 py-5 ring-1 ring-inset md:px-6 md:py-5 ${ACCENT_BG_SOFT[r.accent]} ${ACCENT_RING[r.accent]}`}
-                  >
-                    <p className="eyebrow text-muted">{r.shippedLabel}</p>
-                    <ul className="mt-3 grid gap-2.5 md:gap-3">
+                  <div className={`mt-5 rounded-r-xl rounded-bl-xl px-4 py-4 md:mt-6 md:px-5 md:py-5 ${SHIPPED_PANEL[r.accent]}`}>
+                    <p className="eyebrow text-ink/50">{r.shippedLabel}</p>
+                    <ul className="mt-2.5 grid gap-2 md:gap-2.5">
                       {r.shipped.map((item) => (
-                        <li key={item} className="flex gap-3 text-[14.5px] leading-[1.55] text-ink/85 md:text-[15px]">
+                        <li
+                          key={item}
+                          className="flex gap-3 text-[14px] leading-[1.55] text-ink/88 md:text-[15px]"
+                        >
                           <span
                             aria-hidden
-                            className={`mt-[0.55em] inline-block h-1.5 w-1.5 shrink-0 rounded-full ${ACCENT_BAR[r.accent]}`}
+                            className={`mt-[0.5em] inline-block h-1 w-1 shrink-0 rotate-45 ${ACCENT_BAR[r.accent]}`}
                           />
                           <span>{item}</span>
                         </li>
@@ -310,12 +318,11 @@ export default function Experience() {
                   </div>
                 ) : null}
 
-                {/* Tech tags */}
                 {r.tags?.length ? (
-                  <ul className="mt-5 flex flex-wrap gap-2">
+                  <ul className="mt-4 flex flex-wrap gap-2 md:mt-5">
                     {r.tags.map((t) => (
                       <li key={t}>
-                        <span className="inline-flex items-center rounded-full bg-ink/5 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink/70 ring-1 ring-ink/10">
+                        <span className="inline-flex items-center rounded-md border border-dashed border-ink/15 bg-sand/80 px-2.5 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.1em] text-ink/70">
                           {t}
                         </span>
                       </li>
@@ -326,7 +333,6 @@ export default function Experience() {
             </motion.li>
           ))}
         </ul>
-
       </div>
     </section>
   )
@@ -334,9 +340,9 @@ export default function Experience() {
 
 function IncomingBadge() {
   return (
-    <span className="relative inline-flex items-center gap-1.5 rounded-full bg-cobalt/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-cobalt ring-1 ring-cobalt/30">
+    <span className="relative inline-flex items-center gap-1.5 rounded-md border border-cobalt/25 bg-cobalt/[0.08] px-2 py-1 text-[9px] font-bold uppercase tracking-[0.2em] text-cobalt">
       <span className="relative flex h-1.5 w-1.5">
-        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cobalt/60" />
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cobalt/50" />
         <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-cobalt" />
       </span>
       Incoming
